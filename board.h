@@ -3,6 +3,7 @@
 #include <vector>
 #include "graphics.h"
 #include "object.h"
+#include "pipe_type.h"
 #include "connection.h"
 
 class BOARD
@@ -10,9 +11,12 @@ class BOARD
 	ID2D1HwndRenderTarget* target;
 
 	std::vector<OBJECT*> objects;
+	std::vector<PIPE_TYPE*> pipe_types;
 	std::vector<CONNECTION*> connections;
 
 	OBJECT* selected;
+
+	ID2D1SolidColorBrush* grid_brush;
 	bool grid;
 
 	BOARD(ID2D1HwndRenderTarget*, IDWriteFactory*);
@@ -20,7 +24,6 @@ class BOARD
 	BOARD& operator= (const BOARD&) = delete;
 	~BOARD() noexcept;
 
-	void EventProc(HWND, UINT, WPARAM, LPARAM) noexcept;
 	void NewObject(OBJECT*) noexcept;
 	void DeleteSelected() noexcept;
 	void Clear() noexcept;
@@ -28,6 +31,11 @@ class BOARD
 	void PaintGrid() const noexcept;
 	void Paint() const noexcept;
 	OBJECT* UpdateSelected(const D2D1_POINT_2F&) noexcept;
+
+	void ManagePipeTypes() noexcept;
+
+	void ConstructAlgorithm() noexcept;
+	void TabooAlgorithm() noexcept;
 	
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;

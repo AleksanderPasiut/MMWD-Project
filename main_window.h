@@ -7,6 +7,13 @@
 #include "view_management.h"
 #include "dialog_add_modify.h"
 
+enum MW_CURSOR_TYPE
+{
+	MWCT_ARROW = 0,
+	MWCT_MOVE = 1,
+	MWCT_SELECT = 2,
+};
+
 class MAIN_WINDOW
 {
 	GRAPHICS* graphics;
@@ -17,11 +24,15 @@ class MAIN_WINDOW
 	WNDCLASSEXW wc;
 	HWND hwnd;
 	ID2D1HwndRenderTarget* target;
-	ID2D1SolidColorBrush* def;
 	BOARD* board;
 
 	D2D1_POINT_2F lastRClick;
 	bool object_moving;
+
+	HCURSOR hCursor[3];
+	void InitCursors();
+	void FreeCursors() noexcept;
+	void SetCursor(MW_CURSOR_TYPE) const noexcept;
 
 	MAIN_WINDOW(GRAPHICS*, WNDPROC wndproc);
 	MAIN_WINDOW(const MAIN_WINDOW&) = delete;

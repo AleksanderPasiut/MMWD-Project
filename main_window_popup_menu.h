@@ -3,11 +3,10 @@
 #include <Windows.h>
 #include "board.h"
 
-#define PMB_ADD_OBJECT 0x101
-#define PM_CLEAR_TABLE 0x102
-#define PMA_MOVE 0x103
-#define PMA_MODIFY 0x104
-#define PMA_DELETE 0x105
+#define PMB_ADD_OBJECT 0x1101
+#define PM_CLEAR_TABLE 0x1102
+#define PMA_MODIFY 0x1103
+#define PMA_DELETE 0x1104
 
 class MAIN_WINDOW_POPUP_MENU
 {

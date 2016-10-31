@@ -6,24 +6,32 @@ BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) : tar
 
 	try
 	{
-		CONNECTION::InitStaticFields(target);
+		CONNECTION::InitStaticFields(target, dWriteFactory);
+
+		try
+		{
+			target->CreateSolidColorBrush(D2D1::ColorF(0.5f, 0.5f, 0.5f), &grid_brush);
+		}
+		catch(...) { CONNECTION::FreeStaticFields(); throw; }
 	}
 	catch(...) { OBJECT::FreeStaticFields(); throw; }
 
 	objects.push_back(new OBJECT(D2D1::Point2F(0.0f, 0.0f), 1, 0));
 	objects.push_back(new OBJECT(D2D1::Point2F(150.0f, 0.0f), 0, 2));
+
+	pipe_types.push_back(new PIPE_TYPE(2.0f, 100));
+	pipe_types.push_back(new PIPE_TYPE(3.0f, 200));
+
+	connections.push_back(new CONNECTION(objects[0], objects[1], pipe_types[1]));
 }
 BOARD::~BOARD() noexcept
 {
 	Clear();
+	grid_brush->Release();
 	CONNECTION::FreeStaticFields();
 	OBJECT::FreeStaticFields();
 }
 
-void BOARD::EventProc(HWND, UINT, WPARAM, LPARAM) noexcept
-{
-
-}
 void BOARD::NewObject(OBJECT* new_object) noexcept
 {
 	objects.push_back(new_object);
@@ -40,15 +48,20 @@ void BOARD::DeleteSelected() noexcept
 }
 void BOARD::Clear() noexcept
 {
-	for (auto it = objects.begin(); it != objects.end(); it++)
-		delete *it;
-
-	objects.clear();
-
 	for (auto it = connections.begin(); it != connections.end(); it++)
 		delete *it;
 
 	connections.clear();
+
+	for (auto it = pipe_types.begin(); it != pipe_types.end(); it++)
+		delete *it;
+
+	pipe_types.clear();
+
+	for (auto it = objects.begin(); it != objects.end(); it++)
+		delete *it;
+
+	objects.clear();
 }
 
 void BOARD::PaintGrid() const noexcept
@@ -56,6 +69,7 @@ void BOARD::PaintGrid() const noexcept
 	using namespace D2D1;
 
 	float interval = 100;
+	float grid_stroke = 1.2f;
 
 	D2D1_SIZE_F size = target->GetSize();
 	Matrix3x2F t;
@@ -70,14 +84,14 @@ void BOARD::PaintGrid() const noexcept
 	{
 		target->DrawLine(Point2F(boundaries.left, interval*i),
 						 Point2F(boundaries.right, interval*i),
-						 OBJECT::brush_default, 0.5f);
+						 grid_brush, grid_stroke);
 	}
 
 	for (int i = static_cast<int>(boundaries.left/interval); i <= static_cast<int>(boundaries.right/interval); i++)
 	{
 		target->DrawLine(Point2F(interval*i, boundaries.top),
 						 Point2F(interval*i, boundaries.bottom),
-						 OBJECT::brush_default, 0.5f);
+						 grid_brush, grid_stroke);
 	}
 }
 void BOARD::Paint() const noexcept
@@ -109,3 +123,4 @@ OBJECT* BOARD::UpdateSelected(const D2D1_POINT_2F& pt) noexcept
 	selected = ret;
 	return ret;
 }
+

@@ -16,5 +16,6 @@ void MAIN_WINDOW_MENU::SetBoard(BOARD* board) noexcept
 void MAIN_WINDOW_MENU::Update() noexcept
 {
 	CheckMenuItem(hMenu, MWM_SHOW_GRID, board->grid ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(hMenu, MWM_SHOW_INFO, OBJECT::info ? MF_CHECKED : MF_UNCHECKED);
+	CheckMenuItem(hMenu, MWM_SHOW_INFO_OBJECTS, OBJECT::info ? MF_CHECKED : MF_UNCHECKED);
+	CheckMenuItem(hMenu, MWM_SHOW_INFO_CONNECTIONS, CONNECTION::info ? MF_CHECKED : MF_UNCHECKED);
 }

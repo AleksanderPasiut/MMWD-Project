@@ -1,3 +1,4 @@
+#include <Windowsx.h>
 #include "view_management.h"
 
 VIEW_MANAGEMENT::VIEW_MANAGEMENT() : target(0), shift({0,0}), zoom(1), zoom_speed(1.1f)
@@ -26,7 +27,7 @@ void VIEW_MANAGEMENT::UpdateMatrix() noexcept
 void VIEW_MANAGEMENT::Zooming(WPARAM wParam, LPARAM lParam) noexcept
 {
 	short delta = GET_WHEEL_DELTA_WPARAM(wParam);
-	D2D1_POINT_2F ps = { static_cast<float>(LOWORD(lParam)), static_cast<float>(HIWORD(lParam)) };
+	D2D1_POINT_2F ps = { static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)) };
 	D2D1_POINT_2F pl = { physicToLogic._11*ps.x + physicToLogic._21*ps.y + physicToLogic._31, 
 						 physicToLogic._12*ps.x + physicToLogic._22*ps.y + physicToLogic._32 };
 
@@ -45,15 +46,15 @@ void VIEW_MANAGEMENT::Zooming(WPARAM wParam, LPARAM lParam) noexcept
 void VIEW_MANAGEMENT::MovingStart(WPARAM wParam, LPARAM lParam) noexcept
 {
 	active = true;
-	click = { LOWORD(lParam), HIWORD(lParam) };
+	click = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	init_shift = shift;
 }
 bool VIEW_MANAGEMENT::MovingPerform(WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (active)
 	{
-		shift.x = init_shift.x + static_cast<float>(LOWORD(lParam) - click.x);
-		shift.y = init_shift.y + static_cast<float>(HIWORD(lParam) - click.y);
+		shift.x = init_shift.x + static_cast<float>(GET_X_LPARAM(lParam) - click.x);
+		shift.y = init_shift.y + static_cast<float>(GET_Y_LPARAM(lParam) - click.y);
 
 		UpdateMatrix();
 	}

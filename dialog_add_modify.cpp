@@ -24,7 +24,18 @@ void InitDialog(HWND hwnd, const OBJECT_PROPERTIES* op) noexcept
 					CTRL_EDIT_SELF_CAPABILITIES,
 					std::to_wstring(op->self_capabilities).c_str());
 }
-void SaveDialog(HWND hwnd, OBJECT_PROPERTIES* op)
+void SelectContent(HWND hwnd, WPARAM wParam) noexcept
+{
+	switch(HIWORD(wParam))
+	{
+		case EN_SETFOCUS:
+		{
+			PostMessage(GetDlgItem(hwnd, LOWORD(wParam)), EM_SETSEL, 0, -1);
+			break;
+		}
+	}
+}
+void SaveDialog(HWND hwnd, OBJECT_PROPERTIES* op) noexcept
 {
 	wchar_t buffer[30];
 	GetDlgItemTextW(hwnd, CTRL_EDIT_POS_X, buffer, 30);
@@ -36,7 +47,7 @@ void SaveDialog(HWND hwnd, OBJECT_PROPERTIES* op)
 	GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_CAPABILITIES, buffer, 30);
 	op->self_capabilities = std::stof(std::wstring(buffer));
 }
-BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	static OBJECT_PROPERTIES* op = 0;
 
@@ -52,6 +63,14 @@ BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		{
 			switch(LOWORD(wParam))
 			{
+				case CTRL_EDIT_POS_X:
+				case CTRL_EDIT_POS_Y:
+				case CTRL_EDIT_SELF_NEED:
+				case CTRL_EDIT_SELF_CAPABILITIES:
+				{
+					SelectContent(hwnd, wParam);
+					break;
+				}
 				case CTRL_OK:
 				{
 					SaveDialog(hwnd, op);

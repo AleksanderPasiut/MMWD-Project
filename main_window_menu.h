@@ -3,10 +3,12 @@
 #include <Windows.h>
 #include "board.h"
 
-#define OPTION_1_1 1
-#define OPTION_1_2 2
-#define MWM_SHOW_GRID 3
-#define MWM_SHOW_INFO 4
+#define MWM_MANAGE_PIPE_TYPES 0x101
+#define MWM_CONSTRUCT_ALGORITHM 0x102
+#define MWM_TABOO_ALGORITHM 0x103
+#define MWM_SHOW_GRID 0x201
+#define MWM_SHOW_INFO_OBJECTS 0x202
+#define MWM_SHOW_INFO_CONNECTIONS 0x203
 
 class MAIN_WINDOW_MENU
 {

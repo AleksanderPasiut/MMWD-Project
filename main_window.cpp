@@ -44,7 +44,7 @@ MAIN_WINDOW::MAIN_WINDOW(GRAPHICS* graphics, WNDPROC wndproc) : graphics(graphic
 
 			try
 			{
-				target->CreateSolidColorBrush(ColorF(0.1f, 0.1f, 0.1f), &def);
+				InitCursors();
 			}
 			catch(...) { target->Release(); throw; }
 		}
@@ -58,7 +58,7 @@ MAIN_WINDOW::MAIN_WINDOW(GRAPHICS* graphics, WNDPROC wndproc) : graphics(graphic
 }
 MAIN_WINDOW::~MAIN_WINDOW() noexcept
 {
-	def->Release();
+	FreeCursors();
 	target->Release();
 	DestroyWindow(hwnd);
 	UnregisterClassW(wc.lpszClassName, wc.hInstance);
@@ -73,9 +73,6 @@ void MAIN_WINDOW::SetBoard(BOARD* board) noexcept
 }
 void MAIN_WINDOW::MoveObject(WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (!object_moving)
-		return;
-
 	board->selected->pos = LParamToLogicPt(lParam);
 	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 }
@@ -85,18 +82,32 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 	{
 		case WM_LBUTTONDOWN:
 		{
-			object_moving = false;
+			if (!object_moving && board->UpdateSelected(LParamToLogicPt(lParam)))
+			{
+				object_moving = true;
+			}
+			else
+			{
+				object_moving = false;
+				viewManagement.MovingStart(wParam, lParam);
+			}
 			SetCapture(hwnd);
-			viewManagement.MovingStart(wParam, lParam);
 			RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 			break;
 		}
 		case WM_MOUSEMOVE:
 		{
-			if (viewManagement.MovingPerform(wParam, lParam))
-				RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+			if (object_moving)
+				MoveObject(wParam, lParam);
+			else
+			{
+				if (board->UpdateSelected(LParamToLogicPt(lParam)))
+					SetCursor(MWCT_SELECT);
+				else SetCursor(MWCT_MOVE);
 
-			MoveObject(wParam, lParam);
+				if (viewManagement.MovingPerform(wParam, lParam))
+					RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+			}
 			break;
 		}
 		case WM_LBUTTONUP:
@@ -141,9 +152,16 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				{
 					case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
 					case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
-					case PMA_MOVE: if (board->selected) object_moving = true; break;
 					case PMA_DELETE: board->DeleteSelected(); break;
-					case PM_CLEAR_TABLE: board->Clear(); break;
+					case PM_CLEAR_TABLE:
+					{
+						board->Clear();
+						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+						break;
+					}
+					case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
+					case MWM_CONSTRUCT_ALGORITHM: board->ConstructAlgorithm(); break;
+					case MWM_TABOO_ALGORITHM: board->TabooAlgorithm(); break;
 					case MWM_SHOW_GRID: 
 					{
 						board->grid = !board->grid;
@@ -151,9 +169,16 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 						break;
 					}
-					case MWM_SHOW_INFO:
+					case MWM_SHOW_INFO_OBJECTS:
 					{
 						OBJECT::info = !OBJECT::info;
+						mwMenu.Update();
+						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+						break;
+					}
+					case MWM_SHOW_INFO_CONNECTIONS:
+					{
+						CONNECTION::info = !CONNECTION::info;
 						mwMenu.Update();
 						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 						break;

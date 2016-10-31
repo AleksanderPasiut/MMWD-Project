@@ -26,6 +26,7 @@ class OBJECT
 
 	void Paint() noexcept;
 
+	friend class CONNECTION;
 	friend class BOARD;
 	friend class DIALOG_ADD_MODIFY;
 	friend class MAIN_WINDOW;
