@@ -8,7 +8,8 @@ MAIN_WINDOW::MAIN_WINDOW(GRAPHICS* graphics, WNDPROC wndproc) : graphics(graphic
 	wc.lpfnWndProc = wndproc;
 	wc.lpszClassName = L"SimulatorMainWindowClass";
 	wc.hInstance = GetModuleHandle(0);
-	wc.hIcon = LoadIcon(0, IDI_APPLICATION);
+	wc.hIcon = LoadIcon(GetModuleHandle(0), L"icon_big");
+	wc.hIconSm = LoadIcon(GetModuleHandle(0), L"icon_small");
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 
@@ -17,10 +18,9 @@ MAIN_WINDOW::MAIN_WINDOW(GRAPHICS* graphics, WNDPROC wndproc) : graphics(graphic
 
 	try
 	{
-		const wchar_t* window_name = L"MMWD Project Simulator & Solver";
 		hwnd = CreateWindowExW(0,
 							   wc.lpszClassName,
-							   window_name,
+							   0,
 							   WS_OVERLAPPEDWINDOW,
 							   CW_USEDEFAULT,
 							   CW_USEDEFAULT,
@@ -74,6 +74,29 @@ void MAIN_WINDOW::SetBoard(BOARD* board) noexcept
 void MAIN_WINDOW::MoveObject(WPARAM wParam, LPARAM lParam) noexcept
 {
 	board->selected->pos = LParamToLogicPt(lParam);
+	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+}
+void MAIN_WINDOW::ClearTable() noexcept
+{
+	board->Clear();
+	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+}
+void MAIN_WINDOW::ShowGridAction() noexcept
+{
+	board->grid = !board->grid;
+	mwMenu.Update();
+	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+}
+void MAIN_WINDOW::ShowObjectInfoAction() noexcept
+{
+	OBJECT::info = !OBJECT::info;
+	mwMenu.Update();
+	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+}
+void MAIN_WINDOW::ShowConnectionsInfoAction() noexcept
+{
+	CONNECTION::info = !CONNECTION::info;
+	mwMenu.Update();
 	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 }
 void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
@@ -153,36 +176,18 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 					case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
 					case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
 					case PMA_DELETE: board->DeleteSelected(); break;
-					case PM_CLEAR_TABLE:
-					{
-						board->Clear();
-						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-						break;
-					}
+					case PM_CLEAR_TABLE: ClearTable(); break;
 					case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
 					case MWM_CONSTRUCT_ALGORITHM: board->ConstructAlgorithm(); break;
 					case MWM_TABOO_ALGORITHM: board->TabooAlgorithm(); break;
-					case MWM_SHOW_GRID: 
-					{
-						board->grid = !board->grid;
-						mwMenu.Update();
-						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-						break;
-					}
-					case MWM_SHOW_INFO_OBJECTS:
-					{
-						OBJECT::info = !OBJECT::info;
-						mwMenu.Update();
-						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-						break;
-					}
-					case MWM_SHOW_INFO_CONNECTIONS:
-					{
-						CONNECTION::info = !CONNECTION::info;
-						mwMenu.Update();
-						RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-						break;
-					}
+					case MWM_SHOW_GRID: ShowGridAction(); break;
+					case MWM_SHOW_INFO_OBJECTS: ShowObjectInfoAction(); break;
+					case MWM_SHOW_INFO_CONNECTIONS: ShowConnectionsInfoAction(); break;
+					case MWM_FILE_NEW: FILE_MANAGER::NewFile(); break;
+					case MWM_FILE_OPEN: FILE_MANAGER::OpenFile(); break;
+					case MWM_FILE_SAVE: FILE_MANAGER::SaveFile(); break;
+					case MWM_FILE_SAVE_AS: FILE_MANAGER::SaveFileAs(); break;
+					case MWM_QUIT: PostQuitMessage(0); break;
 				}
 			break;
 		}

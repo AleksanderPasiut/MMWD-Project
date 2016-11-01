@@ -9,6 +9,11 @@
 #define MWM_SHOW_GRID 0x201
 #define MWM_SHOW_INFO_OBJECTS 0x202
 #define MWM_SHOW_INFO_CONNECTIONS 0x203
+#define MWM_FILE_NEW 0x301
+#define MWM_FILE_OPEN 0x302
+#define MWM_FILE_SAVE 0x303
+#define MWM_FILE_SAVE_AS 0x304
+#define MWM_QUIT 0x305
 
 class MAIN_WINDOW_MENU
 {
@@ -25,4 +30,5 @@ class MAIN_WINDOW_MENU
 	void Update() noexcept;
 
 	friend class MAIN_WINDOW;
+	friend class FILE_MANAGER;
 };

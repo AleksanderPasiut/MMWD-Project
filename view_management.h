@@ -28,4 +28,5 @@ class VIEW_MANAGEMENT
 	void Zooming(WPARAM, LPARAM) noexcept;
 
 	friend class MAIN_WINDOW;
+	friend class FILE_MANAGER;
 };

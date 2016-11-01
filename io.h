@@ -18,10 +18,12 @@ class IO
 
 	void SetBoard(BOARD*) noexcept;
 
-	void Paint() noexcept;
 	void EventProc(HWND, UINT, WPARAM, LPARAM) noexcept;
 
 	ID2D1HwndRenderTarget* MainWindowTarget() const noexcept { return mainWindow.target; }
+	HWND MainWindowHwnd() const noexcept { return mainWindow.hwnd; }
+	VIEW_MANAGEMENT* MainWindowViewManagement() noexcept { return &(mainWindow.viewManagement); }
+	MAIN_WINDOW_MENU* MainWindowMenu() noexcept { return &(mainWindow.mwMenu); }
 
 	friend class PROGRAM;
 };

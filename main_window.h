@@ -6,6 +6,7 @@
 #include "main_window_popup_menu.h"
 #include "view_management.h"
 #include "dialog_add_modify.h"
+#include "file_manager.h"
 
 enum MW_CURSOR_TYPE
 {
@@ -41,6 +42,10 @@ class MAIN_WINDOW
 
 	void SetBoard(BOARD* board) noexcept;
 	void MoveObject(WPARAM wParam, LPARAM lParam) noexcept;
+	void ClearTable() noexcept;
+	void ShowGridAction() noexcept;
+	void ShowObjectInfoAction() noexcept;
+	void ShowConnectionsInfoAction() noexcept;
 	void EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept;
 	void UpdateTargetSize() noexcept;
 	void UpdateTargetSize(LPARAM lParam) noexcept;

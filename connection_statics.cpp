@@ -22,6 +22,7 @@ void CONNECTION::InitStaticFields(ID2D1HwndRenderTarget* arg, IDWriteFactory* dW
 			throw 0;
 
 		font_default->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		font_default->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 	}
 	catch(...) { brush_default->Release(); throw; }
 }

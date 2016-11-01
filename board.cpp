@@ -10,7 +10,7 @@ BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) : tar
 
 		try
 		{
-			target->CreateSolidColorBrush(D2D1::ColorF(0.5f, 0.5f, 0.5f), &grid_brush);
+			target->CreateSolidColorBrush(D2D1::ColorF(0.5f, 0.6f, 0.5f), &grid_brush);
 		}
 		catch(...) { CONNECTION::FreeStaticFields(); throw; }
 	}

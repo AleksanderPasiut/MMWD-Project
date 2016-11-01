@@ -31,4 +31,5 @@ class OBJECT
 	friend class DIALOG_ADD_MODIFY;
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;
+	friend class FILE_MANAGER;
 };

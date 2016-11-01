@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 #include "graphics.h"
 #include "object.h"
 #include "pipe_type.h"
@@ -36,6 +37,9 @@ class BOARD
 
 	void ConstructAlgorithm() noexcept;
 	void TabooAlgorithm() noexcept;
+
+	void LoadFromFile(std::fstream& File);
+	void SaveToFile(std::fstream& File);
 	
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;
@@ -43,4 +47,5 @@ class BOARD
 	friend class DIALOG_ADD_MODIFY;
 	friend class IO;
 	friend class PROGRAM;
+	friend class FILE_MANAGER;
 };

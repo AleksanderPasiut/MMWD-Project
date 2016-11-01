@@ -11,6 +11,7 @@ LRESULT CALLBACK EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	else return DefWindowProc(hwnd, uMsg, wParam, lParam);
 };
 
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR str, int nCmdShow)
 {
 	try
