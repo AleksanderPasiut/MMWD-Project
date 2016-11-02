@@ -15,14 +15,6 @@ BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) : tar
 		catch(...) { CONNECTION::FreeStaticFields(); throw; }
 	}
 	catch(...) { OBJECT::FreeStaticFields(); throw; }
-
-	objects.push_back(new OBJECT(D2D1::Point2F(0.0f, 0.0f), 1, 0));
-	objects.push_back(new OBJECT(D2D1::Point2F(150.0f, 0.0f), 0, 2));
-
-	pipe_types.push_back(new PIPE_TYPE(2.0f, 100));
-	pipe_types.push_back(new PIPE_TYPE(3.0f, 200));
-
-	connections.push_back(new CONNECTION(objects[0], objects[1], pipe_types[1]));
 }
 BOARD::~BOARD() noexcept
 {
