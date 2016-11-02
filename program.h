@@ -6,6 +6,9 @@
 
 class PROGRAM
 {
+	static HANDLE hEvent;
+	static bool PreOpen() noexcept;
+
 	IO Io;
 	BOARD Board;
 

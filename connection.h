@@ -27,5 +27,6 @@ class CONNECTION
 	friend class BOARD;
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;
+	friend class DIALOG_MANAGE_PIPE_TYPES;
 	friend class FILE_MANAGER;
 };

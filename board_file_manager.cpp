@@ -4,21 +4,15 @@ void BOARD::LoadFromFile(std::fstream& File)
 {
 	Clear();
 
-	auto p = File.tellg();
-
 	size_t objects_amount;
 	File.read(reinterpret_cast<char*>(&objects_amount), sizeof(size_t));
-	p = File.tellg();
 	for (size_t i = 0; i < objects_amount; i++)
 	{
 		D2D1_POINT_2F pos;
 		float self_capabilities, self_need;
 		File.read(reinterpret_cast<char*>(&pos), sizeof(D2D1_POINT_2F));
-		p = File.tellg();
 		File.read(reinterpret_cast<char*>(&self_capabilities), sizeof(float));
-		p = File.tellg();
 		File.read(reinterpret_cast<char*>(&self_need), sizeof(float));
-		p = File.tellg();
 		objects.push_back(new OBJECT(pos, self_need, self_capabilities));	
 	}	
 
@@ -84,7 +78,4 @@ void BOARD::SaveToFile(std::fstream& File)
 				break;
 			}
 	}
-
-	auto p = File.tellg();
-	p = p;
 }

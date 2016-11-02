@@ -12,7 +12,15 @@ OPENFILENAMEW FILE_MANAGER::openFileName;
 
 void FILE_MANAGER::GetFilePathFromCommandLine() noexcept
 {
-	
+	wchar_t* command = GetCommandLineW();
+	int argc;
+	wchar_t** argv = CommandLineToArgvW(command, &argc);
+
+	if (argc < 2)
+		return;
+
+	memcpy(fileOpened, argv[1], lstrlenW(argv[1])*sizeof(wchar_t));
+	return;
 }
 void FILE_MANAGER::UpdateMainWindowText() noexcept
 {
@@ -103,11 +111,25 @@ void FILE_MANAGER::SaveToFile() noexcept
 	catch(...) { MessageBoxW(hwnd, L"B³¹d zapisu konfiguracji.", L"B³¹d", MB_OK); }
 }
 
+void FILE_MANAGER::PreOpen() noexcept
+{
+	HWND target = FindWindow(L"SimulatorMainWindowClass", 0);
+	wchar_t* command_line = GetCommandLineW();
+	int command_line_length = int(wcslen(command_line));
+	HANDLE hMapFile = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, command_line_length*sizeof(wchar_t), L"SimulatorFileShared");
+	
+	if (GetLastError() == ERROR_ALREADY_EXISTS)
+		return;
+
+	void* buffer = MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, command_line_length*sizeof(wchar_t));
+	memcpy(buffer, command_line, command_line_length*sizeof(wchar_t));
+	SendMessage(target, WM_TRANSFER, static_cast<WPARAM>(command_line_length), 0);
+
+	UnmapViewOfFile(buffer);
+	CloseHandle(hMapFile);
+}
 void FILE_MANAGER::InitFileManager(HWND hwnd, BOARD* board, VIEW_MANAGEMENT* viewManagement, MAIN_WINDOW_MENU* mainWindowMenu)
 {
-	if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED)))
-		throw 0;
-
 	FILE_MANAGER::fileOpened[0] = 0;
 	FILE_MANAGER::hwnd = hwnd;
 	FILE_MANAGER::board = board;
@@ -126,8 +148,8 @@ void FILE_MANAGER::InitFileManager(HWND hwnd, BOARD* board, VIEW_MANAGEMENT* vie
 	openFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
 	UpdateMainWindowText();
-	//GetFilePathFromCommandLine();
-	//ApplyOpenedFile();
+	GetFilePathFromCommandLine();
+	ApplyOpenedFile();
 }
 void FILE_MANAGER::NewFile() noexcept
 {
@@ -151,6 +173,33 @@ void FILE_MANAGER::OpenFile() noexcept
 	if (OpenFileDialog())
 		ApplyOpenedFile();
 }
+void FILE_MANAGER::OpenTransferFile(WPARAM wParam) noexcept
+{
+	HANDLE hMapFile = OpenFileMappingW(FILE_MAP_READ, FALSE, L"SimulatorFileShared");
+
+	if (!hMapFile)
+		return;
+
+	void* buffer = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, static_cast<int>(wParam)*sizeof(wchar_t));
+
+	if (!buffer)
+		return;
+
+	wchar_t* command = reinterpret_cast<wchar_t*>(buffer);
+	int argc;
+	wchar_t** argv = CommandLineToArgvW(command, &argc);
+
+	if (argc < 2)
+		return;
+
+	memcpy(fileOpened, argv[1], lstrlenW(argv[1])*sizeof(wchar_t));
+
+	ApplyOpenedFile();
+
+	UnmapViewOfFile(buffer);
+	CloseHandle(hMapFile);
+	return;
+}
 void FILE_MANAGER::SaveFile() noexcept
 {
 	if (fileOpened[0] || SaveFileDialog())
@@ -163,5 +212,5 @@ void FILE_MANAGER::SaveFileAs() noexcept
 }
 void FILE_MANAGER::FreeFileManager() noexcept
 {
-	CoUninitialize();
+	
 }

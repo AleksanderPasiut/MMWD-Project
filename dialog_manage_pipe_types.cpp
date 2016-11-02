@@ -1,12 +1,13 @@
 #include "dialog_manage_pipe_types.h"
 
-std::vector<PIPE_TYPE*>* DIALOG_MANAGE_PIPE_TYPES::table = 0;
+std::vector<PIPE_TYPE*>* DIALOG_MANAGE_PIPE_TYPES::pipe_types = 0;
+std::vector<CONNECTION*>* DIALOG_MANAGE_PIPE_TYPES::connections = 0;
 void DIALOG_MANAGE_PIPE_TYPES::InitDialog(HWND hwnd) noexcept
 {
 	using namespace std;
 	wstring wstr;
 
-	for (auto it = table->begin(); it != table->end(); it++)
+	for (auto it = pipe_types->begin(); it != pipe_types->end(); it++)
 	{
 		wstr = wstring(L"przep. = ")+to_wstring((*it)->capacity)+wstring(L", cena = ")+to_wstring((*it)->price);
 		SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wstr.c_str()));
@@ -26,8 +27,8 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessListbox(HWND hwnd, WPARAM wParam, LPARAM l
 			int select = static_cast<int>(SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_GETCURSEL, 0, 0));
 			if (select != LB_ERR)
 			{
-				capacity = table->operator[](select)->capacity;
-				price = table->operator[](select)->price;
+				capacity = pipe_types->operator[](select)->capacity;
+				price = pipe_types->operator[](select)->price;
 			}
 			SetDlgItemText(hwnd, CTRL_EDIT_TEXT_CAPACITY, std::to_wstring(capacity).c_str());
 			SetDlgItemText(hwnd, CTRL_EDIT_TEXT_PRICE, std::to_wstring(price).c_str());
@@ -74,7 +75,7 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessAddPipeType(HWND hwnd, WPARAM wParam, LPAR
 	if (search == LB_ERR)
 	{
 		SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wstr.c_str()));
-		table->push_back(new PIPE_TYPE(capacity, price));
+		pipe_types->push_back(new PIPE_TYPE(capacity, price));
 	}
 }
 void DIALOG_MANAGE_PIPE_TYPES::ProcessDelPipeType(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
@@ -82,13 +83,24 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessDelPipeType(HWND hwnd, WPARAM wParam, LPAR
 	int select = static_cast<int>(SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_GETCURSEL, 0, 0));
 	if (select != LB_ERR)
 	{
-		PIPE_TYPE* pipe = table->operator[](select);
+		PIPE_TYPE* pipe = pipe_types->operator[](select);
 
-		for (auto it = table->begin(); it != table->end(); it++)
+		for (auto it = pipe_types->begin(); it != pipe_types->end(); it++)
 			if (*it == pipe)
 			{
 				delete *it;
-				table->erase(it);
+				pipe_types->erase(it);
+
+				for (auto jt = connections->begin(); jt != connections->end(); jt++)
+					if ((*jt)->pipe == pipe)
+					{
+						delete *jt;
+						jt = connections->erase(jt);
+
+						if (jt == connections->end())
+							break;
+					}
+				
 				break;
 			}
 
@@ -102,7 +114,9 @@ BOOL CALLBACK DialogManagePipeTypes(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	{
 		case WM_INITDIALOG:
 		{
-			DIALOG_MANAGE_PIPE_TYPES::table = reinterpret_cast<std::vector<PIPE_TYPE*>*>(lParam);
+			DIALOG_MANAGE_PIPE_TYPES_LPARAM* dmptl = reinterpret_cast<DIALOG_MANAGE_PIPE_TYPES_LPARAM*>(lParam);
+			DIALOG_MANAGE_PIPE_TYPES::pipe_types = dmptl->pipe_types;
+			DIALOG_MANAGE_PIPE_TYPES::connections = dmptl->connections;
 			DIALOG_MANAGE_PIPE_TYPES::InitDialog(hwnd);
 			break;
 		}

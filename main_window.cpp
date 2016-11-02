@@ -191,6 +191,11 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				}
 			break;
 		}
+		case FILE_MANAGER::WM_TRANSFER:
+		{
+			FILE_MANAGER::OpenTransferFile(wParam);
+			break;
+		}
 	}
 }
 void MAIN_WINDOW::UpdateTargetSize() noexcept

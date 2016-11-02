@@ -11,6 +11,7 @@
 
 class FILE_MANAGER
 {
+	static const UINT WM_TRANSFER = 0x8001;
 	static const int MAX_PATH_LENGTH = 35000;
 	static wchar_t fileOpened[MAX_PATH_LENGTH];
 	static HWND hwnd;
@@ -27,9 +28,11 @@ class FILE_MANAGER
 	static BOOL SaveFileDialog() noexcept;
 	static void SaveToFile() noexcept;
 
+	static void PreOpen() noexcept;
 	static void InitFileManager(HWND, BOARD*, VIEW_MANAGEMENT*, MAIN_WINDOW_MENU*);
 	static void NewFile() noexcept;
 	static void OpenFile() noexcept;
+	static void OpenTransferFile(WPARAM wParam) noexcept;
 	static void SaveFile() noexcept;
 	static void SaveFileAs() noexcept;
 	static void FreeFileManager() noexcept;

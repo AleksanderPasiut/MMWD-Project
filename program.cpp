@@ -1,5 +1,18 @@
 #include "program.h"
 
+HANDLE PROGRAM::hEvent = 0;
+
+bool PROGRAM::PreOpen() noexcept
+{
+	hEvent = CreateEventW(0, false, true, L"Avid ESIV Event");
+
+	if (!GetLastError())
+		return false;
+
+	FILE_MANAGER::PreOpen();
+	return true;
+}
+
 PROGRAM::PROGRAM(WNDPROC proc) : 
 	Io(proc), 
 	Board(Io.MainWindowTarget(), Io.graphics.dwriteFactory)
@@ -14,6 +27,7 @@ PROGRAM::PROGRAM(WNDPROC proc) :
 PROGRAM::~PROGRAM() noexcept
 {
 	FILE_MANAGER::FreeFileManager();
+	CloseHandle(hEvent);
 }
 
 LRESULT PROGRAM::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept

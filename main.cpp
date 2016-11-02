@@ -14,6 +14,9 @@ LRESULT CALLBACK EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR str, int nCmdShow)
 {
+	if (PROGRAM::PreOpen())
+		return 0;
+
 	try
 	{
 		Program = new PROGRAM(EventProc);
