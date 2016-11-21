@@ -5,8 +5,8 @@ struct OBJECT_PROPERTIES
 {
 	float pos_x;
 	float pos_y;
-	float self_need;
-	float self_capabilities;
+	double self_need;
+	double self_capabilities;
 };
 
 void InitDialog(HWND hwnd, const OBJECT_PROPERTIES* op) noexcept

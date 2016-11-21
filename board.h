@@ -35,6 +35,9 @@ class BOARD
 
 	void ManagePipeTypes() noexcept;
 
+	void RefreshTotalObjectValues() noexcept;
+	bool IsSolutionAcceptable() const noexcept;
+	double SolutionCost() const noexcept;
 	void ConstructAlgorithm() noexcept;
 	void TabooAlgorithm() noexcept;
 

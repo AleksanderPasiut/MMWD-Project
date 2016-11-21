@@ -22,8 +22,8 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessListbox(HWND hwnd, WPARAM wParam, LPARAM l
 	{
 		case LBN_SELCHANGE:
 		{
-			float capacity = 0;
-			float price = 0;
+			double capacity = 0;
+			double price = 0;
 			int select = static_cast<int>(SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_GETCURSEL, 0, 0));
 			if (select != LB_ERR)
 			{

@@ -9,10 +9,10 @@ void BOARD::LoadFromFile(std::fstream& File)
 	for (size_t i = 0; i < objects_amount; i++)
 	{
 		D2D1_POINT_2F pos;
-		float self_capabilities, self_need;
+		double self_capabilities, self_need;
 		File.read(reinterpret_cast<char*>(&pos), sizeof(D2D1_POINT_2F));
-		File.read(reinterpret_cast<char*>(&self_capabilities), sizeof(float));
-		File.read(reinterpret_cast<char*>(&self_need), sizeof(float));
+		File.read(reinterpret_cast<char*>(&self_capabilities), sizeof(double));
+		File.read(reinterpret_cast<char*>(&self_need), sizeof(double));
 		objects.push_back(new OBJECT(pos, self_need, self_capabilities));	
 	}	
 
@@ -20,9 +20,9 @@ void BOARD::LoadFromFile(std::fstream& File)
 	File.read(reinterpret_cast<char*>(&pipe_types_amount), sizeof(size_t));
 	for (size_t i = 0; i < pipe_types_amount; i++)
 	{
-		float price, capacity;
-		File.read(reinterpret_cast<char*>(&capacity), sizeof(float));
-		File.read(reinterpret_cast<char*>(&price), sizeof(float));
+		double price, capacity;
+		File.read(reinterpret_cast<char*>(&capacity), sizeof(double));
+		File.read(reinterpret_cast<char*>(&price), sizeof(double));
 		pipe_types.push_back(new PIPE_TYPE(capacity, price));
 	}
 
@@ -44,16 +44,16 @@ void BOARD::SaveToFile(std::fstream& File)
 	for (auto it = objects.begin(); it != objects.end(); it++)
 	{
 		File.write(reinterpret_cast<const char*>(&(*it)->pos), sizeof(D2D1_POINT_2F));
-		File.write(reinterpret_cast<const char*>(&(*it)->self_capabilities), sizeof(float));
-		File.write(reinterpret_cast<const char*>(&(*it)->self_need), sizeof(float));
+		File.write(reinterpret_cast<const char*>(&(*it)->self_capabilities), sizeof(double));
+		File.write(reinterpret_cast<const char*>(&(*it)->self_need), sizeof(double));
 	}
 
 	size_t pipe_types_amount = pipe_types.size();
 	File.write(reinterpret_cast<const char*>(&pipe_types_amount), sizeof(size_t));
 	for (auto it = pipe_types.begin(); it != pipe_types.end(); it++)
 	{
-		File.write(reinterpret_cast<const char*>(&(*it)->capacity), sizeof(float));
-		File.write(reinterpret_cast<const char*>(&(*it)->price), sizeof(float));
+		File.write(reinterpret_cast<const char*>(&(*it)->capacity), sizeof(double));
+		File.write(reinterpret_cast<const char*>(&(*it)->price), sizeof(double));
 	}
 
 	size_t connections_amount = connections.size();

@@ -6,6 +6,14 @@ CONNECTION::CONNECTION(OBJECT* obj_1, OBJECT* obj_2, PIPE_TYPE* pipe) : obj_1(ob
 
 }
 
+double CONNECTION::Cost() const noexcept
+{
+	double objdx = obj_1->pos.x - obj_2->pos.x;
+	double objdy = obj_1->pos.y - obj_2->pos.y;
+	double distance = sqrt(objdx*objdx + objdy*objdy);
+	return distance*pipe->price;
+}
+
 void CONNECTION::Paint() noexcept
 {
 	using namespace std;

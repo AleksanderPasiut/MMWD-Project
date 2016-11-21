@@ -26,11 +26,13 @@ void VIEW_MANAGEMENT::UpdateMatrix() noexcept
 }
 void VIEW_MANAGEMENT::Zooming(WPARAM wParam, LPARAM lParam) noexcept
 {
+	POINT point = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+	ScreenToClient(target->GetHwnd(), &point);
+
 	short delta = GET_WHEEL_DELTA_WPARAM(wParam);
-	D2D1_POINT_2F ps = { static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)) };
+	D2D1_POINT_2F ps = { static_cast<float>(point.x), static_cast<float>(point.y) };
 	D2D1_POINT_2F pl = { physicToLogic._11*ps.x + physicToLogic._21*ps.y + physicToLogic._31, 
 						 physicToLogic._12*ps.x + physicToLogic._22*ps.y + physicToLogic._32 };
-
 	float dzoom;
 	if (delta > 0)
 		dzoom = zoom_speed;

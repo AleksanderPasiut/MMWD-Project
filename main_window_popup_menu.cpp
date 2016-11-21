@@ -22,7 +22,9 @@ void MAIN_WINDOW_POPUP_MENU::SetBoard(BOARD* board) noexcept
 }
 void MAIN_WINDOW_POPUP_MENU::Mouse(HWND hwnd, WPARAM wParam, LPARAM lParam, D2D1_POINT_2F pt) noexcept
 {
+	POINT point;
+	GetCursorPos(&point);
 	if (board->UpdateSelected(pt))
-		TrackPopupMenu(hMenuActive, TPM_LEFTBUTTON, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hwnd, 0);
-	else TrackPopupMenu(hMenuBlank, TPM_LEFTBUTTON, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hwnd, 0);
+		TrackPopupMenu(hMenuActive, TPM_LEFTBUTTON, point.x, point.y, 0, hwnd, 0);
+	else TrackPopupMenu(hMenuBlank, TPM_LEFTBUTTON, point.x, point.y, 0, hwnd, 0);
 }

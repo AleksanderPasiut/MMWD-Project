@@ -22,6 +22,8 @@ class CONNECTION
 	CONNECTION(const CONNECTION&) = delete;
 	CONNECTION& operator= (const CONNECTION&) = delete;
 
+	double Cost() const noexcept;
+
 	void Paint() noexcept;
 
 	friend class BOARD;

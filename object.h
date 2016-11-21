@@ -14,16 +14,19 @@ class OBJECT
 	static void FreeStaticFields() noexcept;
 
 	// pola znacz¹ce od strony algorytmu
-	D2D1_POINT_2F pos;
-	float self_need;
-	float self_capabilities;
-	float total_need;
-	float total_capabilities;
+	D2D1_POINT_2F pos;	// po³o¿enie obiektu
 
-	OBJECT(D2D1_POINT_2F pos, float self_need, float self_capabilities);
+	double self_need;	// zapotrzebowanie w³asne
+	double self_capabilities;	// wydajnoœæ w³asna
+
+	double total_need;	// zapotrzebowanie w³asne + zapotrzebowanie obiektów pod³¹czonych
+	double total_capabilities; // wydajnoœæ w³asna + wydajnoœæ obiektów pod³¹czonych
+
+	OBJECT(D2D1_POINT_2F pos, double self_need, double self_capabilities);
 	OBJECT(const OBJECT&) = delete;
 	OBJECT& operator= (const OBJECT&) = delete;
 
+	bool Ok() const noexcept;
 	void Paint() noexcept;
 
 	friend class CONNECTION;

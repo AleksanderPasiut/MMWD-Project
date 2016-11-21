@@ -1,14 +1,17 @@
 #include <string>
 #include "object.h"
 
-OBJECT::OBJECT(D2D1_POINT_2F pos, float self_need, float self_capabilities) : 
+OBJECT::OBJECT(D2D1_POINT_2F pos, double self_need, double self_capabilities) : 
 	pos(pos), 
 	self_need(self_need),
 	self_capabilities(self_capabilities),
 	total_need(self_need),
 	total_capabilities(self_capabilities)
-{
+{}
 
+bool OBJECT::Ok() const noexcept
+{
+	return total_need <= total_capabilities;
 }
 
 void OBJECT::Paint() noexcept
