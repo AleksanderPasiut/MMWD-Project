@@ -4,7 +4,7 @@ HANDLE PROGRAM::hEvent = 0;
 
 bool PROGRAM::PreOpen() noexcept
 {
-	hEvent = CreateEventW(0, false, true, L"Avid ESIV Event");
+	hEvent = CreateEventW(0, false, true, L"SimulatorEvent");
 
 	if (!GetLastError())
 		return false;

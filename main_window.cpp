@@ -178,6 +178,7 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 					case PMA_DELETE: board->DeleteSelected(); break;
 					case PM_CLEAR_TABLE: ClearTable(); break;
 					case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
+					case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
 					case MWM_CONSTRUCT_ALGORITHM: board->ConstructAlgorithm(); break;
 					case MWM_TABOO_ALGORITHM: board->TabooAlgorithm(); break;
 					case MWM_SHOW_GRID: ShowGridAction(); break;

@@ -1,6 +1,6 @@
 #include "board.h"
 
-BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) : target(target), grid(true)
+BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) : target(target), grid(true), g1(0), g2(0)
 {
 	OBJECT::InitStaticFields(target, dWriteFactory);
 

@@ -13,8 +13,8 @@ void DIALOG_MANAGE_PIPE_TYPES::InitDialog(HWND hwnd) noexcept
 		SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wstr.c_str()));
 	}
 
-	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_CAPACITY, to_wstring(static_cast<float>(0)).c_str());
-	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_PRICE, to_wstring(static_cast<float>(0)).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_CAPACITY, to_wstring(0).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_PRICE, to_wstring(0).c_str());
 }
 void DIALOG_MANAGE_PIPE_TYPES::ProcessListbox(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -64,9 +64,9 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessAddPipeType(HWND hwnd, WPARAM wParam, LPAR
 
 	wchar_t buffer[30];
 	GetDlgItemTextW(hwnd, CTRL_EDIT_TEXT_CAPACITY, buffer, 30);
-	float capacity = std::stof(std::wstring(buffer));
+	double capacity = std::stod(std::wstring(buffer));
 	GetDlgItemTextW(hwnd, CTRL_EDIT_TEXT_PRICE, buffer, 30);
-	float price = std::stof(std::wstring(buffer));
+	double price = std::stod(std::wstring(buffer));
 
 	wstring wstr = wstring(L"przep. = ")+to_wstring(capacity)+wstring(L", cena = ")+to_wstring(price);
 

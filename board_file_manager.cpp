@@ -4,6 +4,9 @@ void BOARD::LoadFromFile(std::fstream& File)
 {
 	Clear();
 
+	File.read(reinterpret_cast<char*>(&g1), sizeof(double));
+	File.read(reinterpret_cast<char*>(&g2), sizeof(double));
+
 	size_t objects_amount;
 	File.read(reinterpret_cast<char*>(&objects_amount), sizeof(size_t));
 	for (size_t i = 0; i < objects_amount; i++)
@@ -39,6 +42,9 @@ void BOARD::LoadFromFile(std::fstream& File)
 }
 void BOARD::SaveToFile(std::fstream& File)
 {
+	File.write(reinterpret_cast<const char*>(&g1), sizeof(double));
+	File.write(reinterpret_cast<const char*>(&g2), sizeof(double));
+
 	size_t objects_amount = objects.size();
 	File.write(reinterpret_cast<const char*>(&objects_amount), sizeof(size_t));
 	for (auto it = objects.begin(); it != objects.end(); it++)

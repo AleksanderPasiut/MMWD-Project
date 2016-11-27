@@ -15,6 +15,9 @@ class BOARD
 	std::vector<PIPE_TYPE*> pipe_types;
 	std::vector<CONNECTION*> connections;
 
+	double g1;	// pumping system cost parameters
+	double g2;
+
 	OBJECT* selected;
 
 	ID2D1SolidColorBrush* grid_brush;
@@ -34,6 +37,7 @@ class BOARD
 	OBJECT* UpdateSelected(const D2D1_POINT_2F&) noexcept;
 
 	void ManagePipeTypes() noexcept;
+	void ManagePumpingSystemCost() noexcept;
 
 	void RefreshTotalObjectValues() noexcept;
 	bool IsSolutionAcceptable() const noexcept;
