@@ -14,15 +14,15 @@ class CONNECTION
 	static void FreeStaticFields() noexcept;
 
 	// pola znacz¹ce od strony algorytmu
-	OBJECT* obj_1;
-	OBJECT* obj_2;
+	OBJECT* obj_source;
+	OBJECT* obj_target;
 	PIPE_TYPE* pipe;
 
-	CONNECTION(OBJECT* obj_1, OBJECT* obj_2, PIPE_TYPE* pipe);
+	CONNECTION(OBJECT* obj_source, OBJECT* obj_target, PIPE_TYPE* pipe);
 	CONNECTION(const CONNECTION&) = delete;
 	CONNECTION& operator= (const CONNECTION&) = delete;
 
-	double Cost() const noexcept;
+	double Cost(double u1, double u2) const noexcept;
 
 	void Paint() noexcept;
 

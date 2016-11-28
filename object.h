@@ -26,6 +26,7 @@ class OBJECT
 	OBJECT(const OBJECT&) = delete;
 	OBJECT& operator= (const OBJECT&) = delete;
 
+	double DistanceTo(const OBJECT&) const noexcept;
 	bool Ok() const noexcept;
 	void Paint() noexcept;
 

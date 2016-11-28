@@ -42,7 +42,11 @@ class BOARD
 	void RefreshTotalObjectValues() noexcept;
 	bool IsSolutionAcceptable() const noexcept;
 	double SolutionCost() const noexcept;
-	void ConstructAlgorithm() noexcept;
+	void ClearConnections() noexcept;
+	void PresentSolutionCost() const noexcept;
+	void PresentSolutionAcceptability() const noexcept;
+	void ConstructAlgorithmPasiut() noexcept;
+	void ConstructAlgorithmTrojnarski() noexcept;
 	void TabooAlgorithm() noexcept;
 
 	void LoadFromFile(std::fstream& File);

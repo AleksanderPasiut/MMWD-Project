@@ -33,12 +33,14 @@ void BOARD::LoadFromFile(std::fstream& File)
 	File.read(reinterpret_cast<char*>(&connections_amount), sizeof(size_t));
 	for (size_t i = 0; i < connections_amount; i++)
 	{
-		unsigned obj_1_id, obj_2_id, pipe_id;
-		File.read(reinterpret_cast<char*>(&obj_1_id), sizeof(unsigned));
-		File.read(reinterpret_cast<char*>(&obj_2_id), sizeof(unsigned));
+		unsigned obj_source_id, obj_target_id, pipe_id;
+		File.read(reinterpret_cast<char*>(&obj_source_id), sizeof(unsigned));
+		File.read(reinterpret_cast<char*>(&obj_target_id), sizeof(unsigned));
 		File.read(reinterpret_cast<char*>(&pipe_id), sizeof(unsigned));
-		connections.push_back(new CONNECTION(objects[obj_1_id], objects[obj_2_id], pipe_types[pipe_id]));
+		connections.push_back(new CONNECTION(objects[obj_source_id], objects[obj_target_id], pipe_types[pipe_id]));
 	}
+
+	RefreshTotalObjectValues();
 }
 void BOARD::SaveToFile(std::fstream& File)
 {
@@ -68,13 +70,13 @@ void BOARD::SaveToFile(std::fstream& File)
 	{
 		unsigned i = 0;
 		for (auto jt = objects.begin(); jt != objects.end(); jt++, i++)
-		{
-			if (*jt == (*it)->obj_1)
+			if (*jt == (*it)->obj_source)
 				File.write(reinterpret_cast<const char*>(&i), sizeof(unsigned));
 
-			if (*jt == (*it)->obj_2)
+		i = 0;
+		for (auto jt = objects.begin(); jt != objects.end(); jt++, i++)
+			if (*jt == (*it)->obj_target)
 				File.write(reinterpret_cast<const char*>(&i), sizeof(unsigned));
-		}
 
 		i = 0;
 		for (auto jt = pipe_types.begin(); jt != pipe_types.end(); jt++, i++)

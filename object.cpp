@@ -9,11 +9,15 @@ OBJECT::OBJECT(D2D1_POINT_2F pos, double self_need, double self_capabilities) :
 	total_capabilities(self_capabilities)
 {}
 
+
+double OBJECT::DistanceTo(const OBJECT& arg) const noexcept
+{
+	return sqrt((arg.pos.x - pos.x)*(arg.pos.x - pos.x) + (arg.pos.y - pos.y)*(arg.pos.y - pos.y));
+}
 bool OBJECT::Ok() const noexcept
 {
 	return total_need <= total_capabilities;
 }
-
 void OBJECT::Paint() noexcept
 {
 	using namespace std;
