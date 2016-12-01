@@ -31,7 +31,8 @@ class DIALOG_MANAGE_PIPE_TYPES
 	static void ProcessEditTextPrice(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
 	static void ProcessAddPipeType(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
 	static void ProcessDelPipeType(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
-
+	static void SortPipes() noexcept;
+	
 	friend BOOL CALLBACK DialogManagePipeTypes(HWND, UINT, WPARAM, LPARAM) noexcept;
 };
 

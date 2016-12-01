@@ -107,6 +107,20 @@ void DIALOG_MANAGE_PIPE_TYPES::ProcessDelPipeType(HWND hwnd, WPARAM wParam, LPAR
 		SendMessage(GetDlgItem(hwnd, CTRL_LISTBOX), LB_DELETESTRING, select, 0);
 	}
 }
+void DIALOG_MANAGE_PIPE_TYPES::SortPipes() noexcept
+{
+	if (pipe_types->size() < 2)
+		return;
+
+	for (size_t i = 0; i < pipe_types->size(); i++)
+		for (auto it = pipe_types->begin(); it+1 != pipe_types->end(); it++)
+			if ((*it)->capacity > (*(it+1))->capacity)
+			{
+				auto tmp = *it;
+				*it = *(it+1);
+				*(it+1) = tmp;
+			}
+}
 
 BOOL CALLBACK DialogManagePipeTypes(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -129,7 +143,7 @@ BOOL CALLBACK DialogManagePipeTypes(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 				case CTRL_EDIT_TEXT_PRICE: DIALOG_MANAGE_PIPE_TYPES::ProcessEditTextPrice(hwnd, wParam, lParam); break;
 				case CTRL_ADD_PIPE_TYPE: DIALOG_MANAGE_PIPE_TYPES::ProcessAddPipeType(hwnd, wParam, lParam); break;
 				case CTRL_DEL_PIPE_TYPE: DIALOG_MANAGE_PIPE_TYPES::ProcessDelPipeType(hwnd, wParam, lParam); break;
-				case CTRL_OK: EndDialog(hwnd, 0); break;
+				case CTRL_OK: DIALOG_MANAGE_PIPE_TYPES::SortPipes(); EndDialog(hwnd, 0); break;
 			}
 			break;
 		}

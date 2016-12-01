@@ -40,7 +40,7 @@ void BOARD::LoadFromFile(std::fstream& File)
 		connections.push_back(new CONNECTION(objects[obj_source_id], objects[obj_target_id], pipe_types[pipe_id]));
 	}
 
-	RefreshTotalObjectValues();
+	RefreshTotalObjectValues(connections);
 }
 void BOARD::SaveToFile(std::fstream& File)
 {

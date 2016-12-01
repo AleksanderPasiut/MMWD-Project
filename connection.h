@@ -18,14 +18,15 @@ class CONNECTION
 	OBJECT* obj_target;
 	PIPE_TYPE* pipe;
 
+	CONNECTION() {}
 	CONNECTION(OBJECT* obj_source, OBJECT* obj_target, PIPE_TYPE* pipe);
-	CONNECTION(const CONNECTION&) = delete;
-	CONNECTION& operator= (const CONNECTION&) = delete;
 
+	bool operator== (const CONNECTION&) const noexcept;
 	double Cost(double u1, double u2) const noexcept;
-
 	void Paint() noexcept;
 
+	friend class MOVE;
+	friend class SOLUTION;
 	friend class BOARD;
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;

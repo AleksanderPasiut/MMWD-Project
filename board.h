@@ -39,14 +39,19 @@ class BOARD
 	void ManagePipeTypes() noexcept;
 	void ManagePumpingSystemCost() noexcept;
 
-	void RefreshTotalObjectValues() noexcept;
+	void RefreshTotalObjectValues(const std::vector<CONNECTION*>&) noexcept;
 	bool IsSolutionAcceptable() const noexcept;
-	double SolutionCost() const noexcept;
+	double SolutionCost(const std::vector<CONNECTION*>&) const noexcept;
 	void ClearConnections() noexcept;
 	void PresentSolutionCost() const noexcept;
 	void PresentSolutionAcceptability() const noexcept;
 	void ConstructAlgorithmPasiut() noexcept;
 	void ConstructAlgorithmTrojnarski() noexcept;
+
+	double PipeCapacityToPrice(double capacity) const noexcept;
+	double func_cT() const noexcept;
+	double OutOfAcceptance() const noexcept;
+	bool InTabooList(const std::vector<MOVE*>&, const MOVE& move) const noexcept;
 	void TabooAlgorithm() noexcept;
 
 	void LoadFromFile(std::fstream& File);
