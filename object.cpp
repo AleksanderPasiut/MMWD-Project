@@ -26,7 +26,7 @@ void OBJECT::Paint() noexcept
 	const float ix = 85;
 	const float iy = 10;
 	const float dx = 15;
-	const float dy = 14;
+	const float dy = 12;
 
 	if (info)
 	{

@@ -22,8 +22,7 @@ struct DIALOG_MANAGE_PIPE_TYPES_LPARAM
 
 class DIALOG_MANAGE_PIPE_TYPES
 {
-	static std::vector<PIPE_TYPE*>* pipe_types;
-	static std::vector<CONNECTION*>* connections;
+	static DIALOG_MANAGE_PIPE_TYPES_LPARAM dmptl;
 
 	static void InitDialog(HWND hwnd) noexcept;
 	static void ProcessListbox(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;

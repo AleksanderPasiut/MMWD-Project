@@ -1,11 +1,10 @@
 #include "dialog_manage_pumping_system_cost.h"
 
-double* DIALOG_MANAGE_PUMPING_SYSTEM_COST::lp_g1 = 0;
-double* DIALOG_MANAGE_PUMPING_SYSTEM_COST::lp_g2 = 0;
+DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM DIALOG_MANAGE_PUMPING_SYSTEM_COST::dmpscl = {};
 void DIALOG_MANAGE_PUMPING_SYSTEM_COST::InitDialog(HWND hwnd) noexcept
 {
-	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_G1, std::to_wstring(*lp_g1).c_str());
-	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_G2, std::to_wstring(*lp_g2).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_G1, std::to_wstring(*dmpscl.lp_g1).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_G2, std::to_wstring(*dmpscl.lp_g2).c_str());
 }
 void DIALOG_MANAGE_PUMPING_SYSTEM_COST::ProcessEditTextG1(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -41,8 +40,8 @@ void DIALOG_MANAGE_PUMPING_SYSTEM_COST::ProcessEndDialog(HWND hwnd) noexcept
 		MessageBox(hwnd, L"Wartoœci wspó³czynników nie mog¹ byæ ujemne", L"B³¹d", MB_OK);
 	else
 	{
-		*lp_g1 = g1;
-		*lp_g2 = g2;
+		*dmpscl.lp_g1 = g1;
+		*dmpscl.lp_g2 = g2;
 		EndDialog(hwnd, 0);
 	}
 }
@@ -53,9 +52,7 @@ BOOL CALLBACK DialogManagePumpingSystemCost(HWND hwnd, UINT uMsg, WPARAM wParam,
 	{
 		case WM_INITDIALOG:
 		{
-			DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM* dmpscl = reinterpret_cast<DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM*>(lParam);
-			DIALOG_MANAGE_PUMPING_SYSTEM_COST::lp_g1 = dmpscl->lp_g1;
-			DIALOG_MANAGE_PUMPING_SYSTEM_COST::lp_g2 = dmpscl->lp_g2;
+			DIALOG_MANAGE_PUMPING_SYSTEM_COST::dmpscl = *reinterpret_cast<DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM*>(lParam);
 			DIALOG_MANAGE_PUMPING_SYSTEM_COST::InitDialog(hwnd);
 			break;
 		}

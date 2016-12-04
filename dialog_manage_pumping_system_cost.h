@@ -16,8 +16,7 @@ struct DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM
 
 class DIALOG_MANAGE_PUMPING_SYSTEM_COST
 {
-	static double* lp_g1;
-	static double* lp_g2;
+	static DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM dmpscl;
 
 	static void InitDialog(HWND hwnd) noexcept;
 	static void ProcessEditTextG1(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;

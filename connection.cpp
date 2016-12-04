@@ -24,8 +24,8 @@ void CONNECTION::Paint() noexcept
 	using namespace std;
 	using namespace D2D1;
 
-	float dy1 = 3;
-	float dy2 = 17;
+	float dy1 = 2;
+	float dy2 = 12;
 
 	target->DrawLine(obj_source->pos, obj_target->pos, brush_default, 1.3f);
 

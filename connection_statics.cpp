@@ -18,7 +18,7 @@ void CONNECTION::InitStaticFields(ID2D1HwndRenderTarget* arg, IDWriteFactory* dW
 												   DWRITE_FONT_WEIGHT_NORMAL,
 												   DWRITE_FONT_STYLE_NORMAL,
 												   DWRITE_FONT_STRETCH_NORMAL,
-												   11.0f, L"pl-pl", &font_default)))
+												   9.0f, L"pl-pl", &font_default)))
 			throw 0;
 
 		font_default->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);

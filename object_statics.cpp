@@ -20,7 +20,7 @@ void OBJECT::InitStaticFields(ID2D1HwndRenderTarget* arg, IDWriteFactory* dWrite
 												   DWRITE_FONT_WEIGHT_NORMAL,
 												   DWRITE_FONT_STYLE_NORMAL,
 												   DWRITE_FONT_STRETCH_NORMAL,
-												   13.0f, L"pl-pl", &font_default)))
+												   11.0f, L"pl-pl", &font_default)))
 			throw 0;
 
 		font_default->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);

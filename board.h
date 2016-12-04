@@ -6,6 +6,7 @@
 #include "object.h"
 #include "pipe_type.h"
 #include "connection.h"
+#include "progress_bar.h"
 
 class BOARD
 {
@@ -18,10 +19,16 @@ class BOARD
 	double g1;	// pumping system cost parameters
 	double g2;
 
+	double kf;	// taboo algorithm parameters
+	size_t taboo_max_size;
+	size_t max_iterations;
+
 	OBJECT* selected;
 
 	ID2D1SolidColorBrush* grid_brush;
 	bool grid;
+
+	PROGRESS_BAR progressBar;
 
 	BOARD(ID2D1HwndRenderTarget*, IDWriteFactory*);
 	BOARD(const BOARD&) = delete;
@@ -38,21 +45,19 @@ class BOARD
 
 	void ManagePipeTypes() noexcept;
 	void ManagePumpingSystemCost() noexcept;
+	void LaunchTabooAlgorithm() noexcept;
+	void PresentSolutionDetails() noexcept;
 
 	void RefreshTotalObjectValues(const std::vector<CONNECTION*>&) noexcept;
 	bool IsSolutionAcceptable() const noexcept;
 	double SolutionCost(const std::vector<CONNECTION*>&) const noexcept;
 	void ClearConnections() noexcept;
-	void PresentSolutionCost() const noexcept;
-	void PresentSolutionAcceptability() const noexcept;
-	void ConstructAlgorithmPasiut() noexcept;
-	void ConstructAlgorithmTrojnarski() noexcept;
 
 	double PipeCapacityToPrice(double capacity) const noexcept;
 	double func_cT() const noexcept;
 	double OutOfAcceptance() const noexcept;
 	bool InTabooList(const std::vector<MOVE*>&, const MOVE& move) const noexcept;
-	void TabooAlgorithm() noexcept;
+	void TabooAlgorithmCore() noexcept;
 
 	void LoadFromFile(std::fstream& File);
 	void SaveToFile(std::fstream& File);

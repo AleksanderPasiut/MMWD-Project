@@ -179,11 +179,8 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 					case PM_CLEAR_TABLE: ClearTable(); break;
 					case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
 					case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
-					//case MWM_CONSTRUCT_ALGORITHM_BY_PASIUT: board->ConstructAlgorithmPasiut(); break;
-					//case MWM_CONSTRUCT_ALGORITHM_BY_TROJNARSKI: board->ConstructAlgorithmTrojnarski(); break;
-					case MWM_TABOO_ALGORITHM: board->TabooAlgorithm(); break;
-					case MWM_PRESENT_SOLUTION_COST: board->PresentSolutionCost(); break;
-					//case MWM_PRESENT_SOLUTION_ACCEPTABILITY:  board->PresentSolutionAcceptability(); break;
+					case MWM_LAUNCH_TABOO_ALGORITHM: board->LaunchTabooAlgorithm(); break;
+					case MWM_PRESENT_SOLUTION_DETAILS: board->PresentSolutionDetails(); break;
 					case MWM_SHOW_GRID: ShowGridAction(); break;
 					case MWM_SHOW_INFO_OBJECTS: ShowObjectInfoAction(); break;
 					case MWM_SHOW_INFO_CONNECTIONS: ShowConnectionsInfoAction(); break;

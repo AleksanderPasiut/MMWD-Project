@@ -42,13 +42,6 @@ void BOARD::ClearConnections() noexcept
 
 	connections.clear();
 }
-void BOARD::PresentSolutionCost() const noexcept
-{
-	using namespace std;
-	double cost = SolutionCost(connections);
-	wstring text = wstring(L"Koszt bie¿¹cego rozwi¹zania wynosi: ")+to_wstring(cost);
-	MessageBox(target->GetHwnd(), text.c_str(), L"Koszt bie¿¹cego rozwi¹zania", MB_OK);
-}
 
 double BOARD::PipeCapacityToPrice(double capacity) const noexcept
 {
@@ -117,22 +110,24 @@ bool BOARD::InTabooList(const std::vector<MOVE*>& list, const MOVE& move) const 
 			return true;
 	return false;
 }
-void BOARD::TabooAlgorithm() noexcept
+void BOARD::TabooAlgorithmCore() noexcept
 {
-	double kf = 1;
+	progressBar.SetRange(max_iterations);
+	progressBar.SetPos(0);
+	progressBar.Show();
+
 	double cT = func_cT();
 
 	SOLUTION s;
 	SOLUTION sBest;
 
 	RefreshTotalObjectValues(s.tab);
-	double sF = SolutionCost(s.tab)+10*kf*cT*OutOfAcceptance();
+	double sF = SolutionCost(s.tab)+kf*cT*OutOfAcceptance();
 
-	size_t taboo_max_size = 5000;
 	std::vector<MOVE*> tabooList;
 	tabooList.reserve(taboo_max_size);
 
-	for (size_t iterations = 0; iterations < 500; iterations++)
+	for (size_t iteration = 0; iteration < max_iterations; iteration++)
 	{
 		MOVE bestCandidateMove;
 		SOLUTION bestCandidate;
@@ -256,7 +251,10 @@ void BOARD::TabooAlgorithm() noexcept
 			sF = bestF;
 			sBest = bestCandidate;
 		}
+
+		progressBar.SetPos(iteration);
 	}
 
 	sBest.Export(connections);
+	progressBar.Hide();
 }
