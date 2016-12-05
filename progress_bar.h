@@ -8,11 +8,14 @@
 #pragma comment(lib,"Comctl32.lib")
 #pragma comment(lib,"UxTheme.lib")
 
+#define MWM_BREAK_BUTTON 0x401
+
 class PROGRESS_BAR
 {
 	WNDCLASSEX wc;
 	HWND hwnd;
 	HWND bar;
+	HWND stop;
 
 	size_t range;
 

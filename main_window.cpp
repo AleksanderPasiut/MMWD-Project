@@ -170,26 +170,33 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		}
 		case WM_COMMAND:
 		{
-			if (HIWORD(wParam) == 0)
-				switch(LOWORD(wParam))
+			switch(HIWORD(wParam))
+			{
+				case 0:
 				{
-					case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
-					case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
-					case PMA_DELETE: board->DeleteSelected(); break;
-					case PM_CLEAR_TABLE: ClearTable(); break;
-					case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
-					case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
-					case MWM_LAUNCH_TABOO_ALGORITHM: board->LaunchTabooAlgorithm(); break;
-					case MWM_PRESENT_SOLUTION_DETAILS: board->PresentSolutionDetails(); break;
-					case MWM_SHOW_GRID: ShowGridAction(); break;
-					case MWM_SHOW_INFO_OBJECTS: ShowObjectInfoAction(); break;
-					case MWM_SHOW_INFO_CONNECTIONS: ShowConnectionsInfoAction(); break;
-					case MWM_FILE_NEW: FILE_MANAGER::NewFile(); break;
-					case MWM_FILE_OPEN: FILE_MANAGER::OpenFile(); break;
-					case MWM_FILE_SAVE: FILE_MANAGER::SaveFile(); break;
-					case MWM_FILE_SAVE_AS: FILE_MANAGER::SaveFileAs(); break;
-					case MWM_QUIT: PostQuitMessage(0); break;
+					switch(LOWORD(wParam))
+					{
+						case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
+						case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
+						case PMA_DELETE: board->DeleteSelected(); break;
+						case PM_CLEAR_TABLE: ClearTable(); break;
+						case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
+						case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
+						case MWM_LAUNCH_TABOO_ALGORITHM: board->LaunchTabooAlgorithm(); break;
+						case MWM_PRESENT_SOLUTION_DETAILS: board->PresentSolutionDetails(); break;
+						case MWM_SHOW_GRID: ShowGridAction(); break;
+						case MWM_SHOW_INFO_OBJECTS: ShowObjectInfoAction(); break;
+						case MWM_SHOW_INFO_CONNECTIONS: ShowConnectionsInfoAction(); break;
+						case MWM_FILE_NEW: FILE_MANAGER::NewFile(); break;
+						case MWM_FILE_OPEN: FILE_MANAGER::OpenFile(); break;
+						case MWM_FILE_SAVE: FILE_MANAGER::SaveFile(); break;
+						case MWM_FILE_SAVE_AS: FILE_MANAGER::SaveFileAs(); break;
+						case MWM_QUIT: PostQuitMessage(0); break;
+						case MWM_BREAK_BUTTON: board->BreakAlgorithm(); break;
+					}
+					break;
 				}
+			}
 			break;
 		}
 		case FILE_MANAGER::WM_TRANSFER:

@@ -257,4 +257,5 @@ void BOARD::TabooAlgorithmCore() noexcept
 
 	sBest.Export(connections);
 	progressBar.Hide();
+	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }

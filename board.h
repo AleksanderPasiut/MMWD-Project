@@ -19,6 +19,7 @@ class BOARD
 	double g1;	// pumping system cost parameters
 	double g2;
 
+	HANDLE algorithmThread;
 	double kf;	// taboo algorithm parameters
 	size_t taboo_max_size;
 	size_t max_iterations;
@@ -46,6 +47,8 @@ class BOARD
 	void ManagePipeTypes() noexcept;
 	void ManagePumpingSystemCost() noexcept;
 	void LaunchTabooAlgorithm() noexcept;
+	friend DWORD WINAPI AlgorithmThreadProc(void*) noexcept;
+	void BreakAlgorithm() noexcept;
 	void PresentSolutionDetails() noexcept;
 
 	void RefreshTotalObjectValues(const std::vector<CONNECTION*>&) noexcept;

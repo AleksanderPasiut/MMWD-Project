@@ -1,6 +1,34 @@
 #include "progress_bar.h"
 
-PROGRESS_BAR::PROGRESS_BAR(HWND parent)
+LRESULT CALLBACK ProgressBarProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch(uMsg)
+	{
+		case WM_COMMAND:
+		{
+			switch(HIWORD(wParam))
+			{
+				case BN_CLICKED:
+				{
+					switch(LOWORD(wParam))
+					{
+						case MWM_BREAK_BUTTON:
+						{
+							PostMessage(reinterpret_cast<HWND>(GetWindowLongPtr(hwnd, GWLP_USERDATA)), WM_COMMAND, MWM_BREAK_BUTTON, 0);
+							break;
+						}
+					}
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+PROGRESS_BAR::PROGRESS_BAR(HWND parent) 
 {
 	INITCOMMONCONTROLSEX icc = 
 	{
@@ -15,11 +43,11 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.lpfnWndProc = DefWindowProc;
+	wc.lpfnWndProc = ProgressBarProc;
 	wc.lpszClassName = L"ProgressBarClass";
 	wc.hIcon = 0;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
-	wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(LTGRAY_BRUSH));
+	wc.hbrBackground = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
 	wc.hInstance = GetModuleHandle(0);
 	
 	if (!RegisterClassEx(&wc))
@@ -29,10 +57,10 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 	{
 		RECT rect = 
 		{
-			GetSystemMetrics(SM_CXSCREEN)/2-150,
-			GetSystemMetrics(SM_CYSCREEN)/2-30,
-			GetSystemMetrics(SM_CXSCREEN)/2+150,
-			GetSystemMetrics(SM_CYSCREEN)/2+30,
+			GetSystemMetrics(SM_CXSCREEN)/2-195,
+			GetSystemMetrics(SM_CYSCREEN)/2-20,
+			GetSystemMetrics(SM_CXSCREEN)/2+195,
+			GetSystemMetrics(SM_CYSCREEN)/2+20,
 		};
 
 		AdjustWindowRectEx(&rect, WS_BORDER | WS_CAPTION, false, 0);
@@ -52,6 +80,8 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 		if (!hwnd)
 			throw 0;
 
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(parent));
+
 		try
 		{
 			bar = CreateWindowExW(0,
@@ -61,7 +91,7 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 								  10,
 								  10,
 								  280,
-								  40,
+								  20,
 								  hwnd,
 								  0,
 								  wc.hInstance,
@@ -70,6 +100,27 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 				throw 0;
 
 			SetWindowTheme(bar, L"Explorer", NULL);
+
+			try
+			{
+				stop = CreateWindowExW(0,
+									   L"BUTTON",
+									   L"Przerwij",
+									   WS_CHILD | WS_VISIBLE,
+									   300,
+									   10,
+									   80,
+									   20,
+									   hwnd,
+									   reinterpret_cast<HMENU>(MWM_BREAK_BUTTON),
+									   wc.hInstance,
+									   0);
+				if (!stop)
+					throw 0;
+
+				SendMessage(stop, WM_SETFONT, reinterpret_cast<WPARAM>(GetStockObject(DEFAULT_GUI_FONT)), true);
+			}
+			catch(...) { DestroyWindow(bar); throw; }
 		}
 		catch(...) { DestroyWindow(hwnd); throw; }
 	}
@@ -77,6 +128,7 @@ PROGRESS_BAR::PROGRESS_BAR(HWND parent)
 }
 PROGRESS_BAR::~PROGRESS_BAR() noexcept
 {
+	DestroyWindow(stop);
 	DestroyWindow(bar);
 	DestroyWindow(hwnd);
 	UnregisterClassW(wc.lpszClassName, wc.hInstance);

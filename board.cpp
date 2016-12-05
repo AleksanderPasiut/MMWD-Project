@@ -1,7 +1,7 @@
 #include "board.h"
 
 BOARD::BOARD(ID2D1HwndRenderTarget* target, IDWriteFactory* dWriteFactory) :
-	target(target), grid(true), g1(0), g2(0), kf(1), taboo_max_size(500), max_iterations(10000), progressBar(target->GetHwnd())
+	target(target), grid(true), g1(0), g2(0), algorithmThread(0), kf(1), taboo_max_size(500), max_iterations(10000), progressBar(target->GetHwnd())
 {
 	OBJECT::InitStaticFields(target, dWriteFactory);
 

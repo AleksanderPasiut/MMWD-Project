@@ -37,7 +37,26 @@ void BOARD::LaunchTabooAlgorithm() noexcept
 				   reinterpret_cast<DLGPROC>(DialogLaunchTabooAlgorithm),
 				   reinterpret_cast<LPARAM>(&dltal));
 
-	TabooAlgorithmCore();
+	EnableWindow(target->GetHwnd(), false);
+	DWORD ThreadId;
+	algorithmThread = CreateThread(0, 0, AlgorithmThreadProc, this, 0, &ThreadId);
+}
+DWORD WINAPI AlgorithmThreadProc(void* arg) noexcept
+{
+	BOARD& board = *reinterpret_cast<BOARD*>(arg);
+	board.TabooAlgorithmCore();
+	EnableWindow(board.target->GetHwnd(), true);
+	CloseHandle(board.algorithmThread);
+	board.algorithmThread = 0;
+	return 0;
+}
+void BOARD::BreakAlgorithm() noexcept
+{
+	TerminateThread(algorithmThread, 0);
+	progressBar.Hide();
+	EnableWindow(target->GetHwnd(), true);
+	SetWindowPos(target->GetHwnd(), HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+	algorithmThread = 0;
 }
 void BOARD::PresentSolutionDetails() noexcept
 {
