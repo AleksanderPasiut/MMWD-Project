@@ -1,4 +1,5 @@
 #include <string>
+#include <fstream>
 
 #include "solution.h"
 #include "move.h"
@@ -115,6 +116,11 @@ void BOARD::TabooAlgorithmCore() noexcept
 	progressBar.SetRange(max_iterations);
 	progressBar.SetPos(0);
 	progressBar.Show();
+
+	std::fstream FS("out.txt", std::fstream::out);
+
+	if (!FS)
+		MessageBox(0, L"file error", L"error", MB_OK);
 
 	double cT = func_cT();
 
@@ -246,6 +252,8 @@ void BOARD::TabooAlgorithmCore() noexcept
 			tabooList.erase(tabooList.begin());
 		}
 
+		FS << bestF << std::endl;
+
 		if (sF > bestF)
 		{
 			sF = bestF;
@@ -256,6 +264,7 @@ void BOARD::TabooAlgorithmCore() noexcept
 	}
 
 	sBest.Export(connections);
+	FS.close();
 	progressBar.Hide();
 	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }

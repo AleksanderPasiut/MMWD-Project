@@ -6,9 +6,7 @@ CONNECTION::CONNECTION(OBJECT* obj_source, OBJECT* obj_target, PIPE_TYPE* pipe) 
 
 bool CONNECTION::operator== (const CONNECTION& arg) const noexcept
 {
-	return obj_target == arg.obj_target &&
-		obj_source == arg.obj_target &&
-		pipe == arg.pipe;
+	return (obj_target == arg.obj_target) && (obj_source == arg.obj_source) && (pipe == arg.pipe);
 }
 
 double CONNECTION::Cost(double u1, double u2) const noexcept

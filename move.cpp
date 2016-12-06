@@ -40,5 +40,6 @@ bool MOVE::operator== (const MOVE& arg) const noexcept
 
 		return arg1 == arg.arg1;
 	}
-	else return arg1 == arg.arg1 && arg2 == arg.arg2;
+	else 
+		return (arg1 == arg.arg1) && (arg2 == arg.arg2);
 }
