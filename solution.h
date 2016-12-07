@@ -16,5 +16,5 @@ class SOLUTION
 
 	void Export(std::vector<CONNECTION*>& out) const noexcept;
 
-	friend class BOARD;
+	friend class ALGORITHM;
 };

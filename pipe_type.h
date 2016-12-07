@@ -10,6 +10,7 @@ class PIPE_TYPE
 	PIPE_TYPE& operator= (const PIPE_TYPE&) = delete;
 
 	friend class CONNECTION;
+	friend class ALGORITHM;
 	friend class BOARD;
 	friend class DIALOG_MANAGE_PIPE_TYPES;
 };

@@ -18,5 +18,5 @@ class MOVE
 
 	bool operator== (const MOVE&) const noexcept;
 
-	friend class BOARD;
+	friend class ALGORITHM;
 };

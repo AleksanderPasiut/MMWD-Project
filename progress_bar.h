@@ -29,5 +29,6 @@ class PROGRESS_BAR
 	void Show() const noexcept;
 	void Hide() const noexcept;
 
+	friend class ALGORITHM;
 	friend class BOARD;
 };

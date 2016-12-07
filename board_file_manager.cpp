@@ -4,8 +4,7 @@ void BOARD::LoadFromFile(std::fstream& File)
 {
 	Clear();
 
-	File.read(reinterpret_cast<char*>(&g1), sizeof(double));
-	File.read(reinterpret_cast<char*>(&g2), sizeof(double));
+	algorithm.LoadFromFile(File);
 
 	size_t objects_amount;
 	File.read(reinterpret_cast<char*>(&objects_amount), sizeof(size_t));
@@ -40,12 +39,11 @@ void BOARD::LoadFromFile(std::fstream& File)
 		connections.push_back(new CONNECTION(objects[obj_source_id], objects[obj_target_id], pipe_types[pipe_id]));
 	}
 
-	RefreshTotalObjectValues(connections);
+	algorithm.RefreshTotalObjectValues(connections);
 }
 void BOARD::SaveToFile(std::fstream& File)
 {
-	File.write(reinterpret_cast<const char*>(&g1), sizeof(double));
-	File.write(reinterpret_cast<const char*>(&g2), sizeof(double));
+	algorithm.SaveToFile(File);
 
 	size_t objects_amount = objects.size();
 	File.write(reinterpret_cast<const char*>(&objects_amount), sizeof(size_t));

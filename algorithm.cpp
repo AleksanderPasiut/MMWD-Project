@@ -3,9 +3,25 @@
 
 #include "solution.h"
 #include "move.h"
-#include "board.h"
+#include "algorithm.h"
 
-void BOARD::RefreshTotalObjectValues(const std::vector<CONNECTION*>& tab) noexcept
+ALGORITHM::ALGORITHM(std::vector<OBJECT*>& objects,	std::vector<PIPE_TYPE*>& pipe_types, std::vector<CONNECTION*>& connections, PROGRESS_BAR& progressBar) :
+	objects(objects),
+	pipe_types(pipe_types),
+	connections(connections),
+	progressBar(progressBar),
+	g1(0),
+	g2(0),
+	hThread(0),
+	kf(1),
+	taboo_max_size(400),
+	best_iteration(0),
+	max_iterations(2000)
+{
+
+}
+
+void ALGORITHM::RefreshTotalObjectValues(const std::vector<CONNECTION*>& tab) noexcept
 {
 	for (auto it = objects.begin(); it != objects.end(); it++)
 	{
@@ -19,7 +35,7 @@ void BOARD::RefreshTotalObjectValues(const std::vector<CONNECTION*>& tab) noexce
 		(*it)->obj_target->total_capabilities += (*it)->pipe->capacity;
 	}
 }
-bool BOARD::IsSolutionAcceptable() const noexcept
+bool ALGORITHM::IsSolutionAcceptable() const noexcept
 {
 	for (auto it = objects.begin(); it != objects.end(); it++)
 		if (!(*it)->Ok())
@@ -27,7 +43,7 @@ bool BOARD::IsSolutionAcceptable() const noexcept
 
 	return true;
 }
-double BOARD::SolutionCost(const std::vector<CONNECTION*>& tab) const noexcept
+double ALGORITHM::SolutionCost(const std::vector<CONNECTION*>& tab) const noexcept
 {
 	double ret = 0;
 
@@ -36,7 +52,7 @@ double BOARD::SolutionCost(const std::vector<CONNECTION*>& tab) const noexcept
 
 	return ret;
 }
-void BOARD::ClearConnections() noexcept
+void ALGORITHM::ClearConnections() noexcept
 {
 	for (auto it = connections.begin(); it != connections.end(); it++)
 		delete *it;
@@ -44,7 +60,7 @@ void BOARD::ClearConnections() noexcept
 	connections.clear();
 }
 
-double BOARD::PipeCapacityToPrice(double capacity) const noexcept
+double ALGORITHM::PipeCapacityToPrice(double capacity) const noexcept
 {
 	if (pipe_types.size() == 1)
 		return (*pipe_types.begin())->price;
@@ -73,7 +89,7 @@ double BOARD::PipeCapacityToPrice(double capacity) const noexcept
 	}
 	return 0;
 }
-double BOARD::func_cT() const noexcept
+double ALGORITHM::func_cT() const noexcept
 {
 	double ret = 0;
 	for (auto it = objects.begin(); it != objects.end(); it++)
@@ -97,30 +113,30 @@ double BOARD::func_cT() const noexcept
 	}
 	return ret;
 }
-double BOARD::OutOfAcceptance() const noexcept
+double ALGORITHM::OutOfAcceptance() const noexcept
 {
 	double ret = 0;
 	for (auto it = objects.begin(); it != objects.end(); it++)
 		ret += max((*it)->total_need - (*it)->total_capabilities, 0);
 	return ret;
 }
-bool BOARD::InTabooList(const std::vector<MOVE*>& list, const MOVE& move) const noexcept
+bool ALGORITHM::InTabooList(const std::vector<MOVE*>& list, const MOVE& move) const noexcept
 {
 	for (auto it = list.begin(); it != list.end(); it++)
 		if (**it == move)
 			return true;
 	return false;
 }
-void BOARD::TabooAlgorithmCore() noexcept
+void ALGORITHM::Core() noexcept
 {
 	progressBar.SetRange(max_iterations);
 	progressBar.SetPos(0);
 	progressBar.Show();
 
-	std::fstream FS("out.txt", std::fstream::out);
+	std::fstream FS(L"out.txt", std::fstream::out);
 
 	if (!FS)
-		MessageBox(0, L"file error", L"error", MB_OK);
+		MessageBox(0, L"B³¹d zapisu do pliku.", L"B³¹d", MB_OK);
 
 	double cT = func_cT();
 
@@ -258,6 +274,7 @@ void BOARD::TabooAlgorithmCore() noexcept
 		{
 			sF = bestF;
 			sBest = bestCandidate;
+			best_iteration = iteration;
 		}
 
 		progressBar.SetPos(iteration);
@@ -266,5 +283,16 @@ void BOARD::TabooAlgorithmCore() noexcept
 	sBest.Export(connections);
 	FS.close();
 	progressBar.Hide();
-	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }
+
+void ALGORITHM::LoadFromFile(std::fstream& File)
+{
+	File.read(reinterpret_cast<char*>(&g1), sizeof(double));
+	File.read(reinterpret_cast<char*>(&g2), sizeof(double));
+}
+void ALGORITHM::SaveToFile(std::fstream& File)
+{
+	File.write(reinterpret_cast<const char*>(&g1), sizeof(double));
+	File.write(reinterpret_cast<const char*>(&g2), sizeof(double));
+}
+

@@ -32,7 +32,7 @@ void FILE_MANAGER::UpdateMainWindowText() noexcept
 		unsigned dot = i;
 		for (;fileOpened[i] != L'\\'; i--);
 		std::wstring text(fileOpened+i+1, dot-i-1);
-		text += L" - MMWD Projet Simulator & Solver";
+		text += L" - MMWD Project Simulator & Solver";
 
 		SetWindowTextW(hwnd, text.c_str());
 	}

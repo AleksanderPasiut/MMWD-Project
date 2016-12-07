@@ -27,6 +27,7 @@ class CONNECTION
 
 	friend class MOVE;
 	friend class SOLUTION;
+	friend class ALGORITHM;
 	friend class BOARD;
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;
