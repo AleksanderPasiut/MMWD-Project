@@ -46,6 +46,7 @@ class BOARD
 	void PresentSolutionDetails() noexcept;
 	void PresentBestIteration() noexcept;
 
+	void ApplyDefaultExportPath(std::wstring&) noexcept;
 	void LoadFromFile(std::fstream& File);
 	void SaveToFile(std::fstream& File);
 	

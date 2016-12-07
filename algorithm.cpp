@@ -82,7 +82,7 @@ double ALGORITHM::PipeCapacityToPrice(double capacity) const noexcept
 	else
 	{
 		for (auto it = pipe_types.begin(); it != pipe_types.end()-1; it++)
-			if ((*it)->capacity <= capacity && capacity < (*it+1)->capacity)
+			if ((*it)->capacity <= capacity && capacity < (*(it+1))->capacity)
 				return (capacity - (*it)->capacity)*
 					   ((*it+1)->price - (*it)->price)/
 					   ((*it+1)->capacity-(*it)->capacity);
@@ -133,9 +133,9 @@ void ALGORITHM::Core() noexcept
 	progressBar.SetPos(0);
 	progressBar.Show();
 
-	std::fstream FS(L"out.txt", std::fstream::out);
+	std::fstream FS(export_path, std::fstream::out);
 
-	if (!FS)
+	if (!FS && export_path.length() > 1)
 		MessageBox(0, L"B³¹d zapisu do pliku.", L"B³¹d", MB_OK);
 
 	double cT = func_cT();
@@ -285,14 +285,28 @@ void ALGORITHM::Core() noexcept
 	progressBar.Hide();
 }
 
+void ALGORITHM::ApplyDefaultExportPath(std::wstring& path) noexcept
+{
+	export_path = path;
+}
 void ALGORITHM::LoadFromFile(std::fstream& File)
 {
 	File.read(reinterpret_cast<char*>(&g1), sizeof(double));
 	File.read(reinterpret_cast<char*>(&g2), sizeof(double));
+
+	File.read(reinterpret_cast<char*>(&kf), sizeof(double));
+	File.read(reinterpret_cast<char*>(&taboo_max_size), sizeof(size_t));
+	File.read(reinterpret_cast<char*>(&max_iterations), sizeof(size_t));
+
+
 }
 void ALGORITHM::SaveToFile(std::fstream& File)
 {
 	File.write(reinterpret_cast<const char*>(&g1), sizeof(double));
 	File.write(reinterpret_cast<const char*>(&g2), sizeof(double));
+
+	File.write(reinterpret_cast<const char*>(&kf), sizeof(double));
+	File.write(reinterpret_cast<const char*>(&taboo_max_size), sizeof(size_t));
+	File.write(reinterpret_cast<const char*>(&max_iterations), sizeof(size_t));
 }
 

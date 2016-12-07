@@ -33,7 +33,8 @@ void BOARD::LaunchTabooAlgorithm() noexcept
 	{
 		&algorithm.kf,
 		&algorithm.taboo_max_size,
-		&algorithm.max_iterations
+		&algorithm.max_iterations,
+		&algorithm.export_path
 	};
 
 	DialogBoxParam(0,

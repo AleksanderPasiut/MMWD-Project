@@ -22,6 +22,7 @@ class FILE_MANAGER
 	static OPENFILENAMEW openFileName;
 	
 	static void GetFilePathFromCommandLine() noexcept;
+	static void ApplyDefaultExportPath() noexcept;
 	static void UpdateMainWindowText() noexcept;
 	static BOOL OpenFileDialog() noexcept;
 	static void ApplyOpenedFile() noexcept;

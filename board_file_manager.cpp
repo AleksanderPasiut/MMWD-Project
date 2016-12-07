@@ -1,5 +1,9 @@
 #include "board.h"
 
+void BOARD::ApplyDefaultExportPath(std::wstring& path) noexcept
+{
+	algorithm.ApplyDefaultExportPath(path);
+}
 void BOARD::LoadFromFile(std::fstream& File)
 {
 	Clear();

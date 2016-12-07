@@ -20,7 +20,19 @@ void FILE_MANAGER::GetFilePathFromCommandLine() noexcept
 		return;
 
 	memcpy(fileOpened, argv[1], lstrlenW(argv[1])*sizeof(wchar_t));
+	ApplyDefaultExportPath();
 	return;
+}
+void FILE_MANAGER::ApplyDefaultExportPath() noexcept
+{
+	using namespace std;
+	wstring path(fileOpened);
+	auto it = path.end()-1;
+	while(*it != L'\\')
+		--it;
+	path.erase(it+1, path.end());
+	path += wstring(L"export.txt");
+	board->ApplyDefaultExportPath(path);
 }
 void FILE_MANAGER::UpdateMainWindowText() noexcept
 {
@@ -41,7 +53,9 @@ void FILE_MANAGER::UpdateMainWindowText() noexcept
 BOOL FILE_MANAGER::OpenFileDialog() noexcept
 {
 	openFileName.lpstrTitle = L"Otwórz konfiguracjê";
-	return GetOpenFileNameW(&openFileName);
+	BOOL ret = GetOpenFileNameW(&openFileName);
+	ApplyDefaultExportPath();
+	return ret;
 }
 void FILE_MANAGER::ApplyOpenedFile() noexcept
 {
@@ -82,7 +96,7 @@ BOOL FILE_MANAGER::SaveFileDialog() noexcept
 {
 	openFileName.lpstrTitle = L"Zapisz konfiguracjê";
 	BOOL ret = GetSaveFileNameW(&openFileName);
-
+	ApplyDefaultExportPath();
 	return ret;
 }
 void FILE_MANAGER::SaveToFile() noexcept
@@ -193,6 +207,7 @@ void FILE_MANAGER::OpenTransferFile(WPARAM wParam) noexcept
 		return;
 
 	memcpy(fileOpened, argv[1], lstrlenW(argv[1])*sizeof(wchar_t));
+	ApplyDefaultExportPath();
 
 	ApplyOpenedFile();
 

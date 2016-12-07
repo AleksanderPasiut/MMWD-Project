@@ -15,6 +15,8 @@ class ALGORITHM
 
 	PROGRESS_BAR& progressBar;
 
+	std::wstring export_path;
+
 	double g1;
 	double g2;
 
@@ -39,6 +41,7 @@ class ALGORITHM
 	bool InTabooList(const std::vector<MOVE*>&, const MOVE& move) const noexcept;
 	void Core() noexcept;
 	
+	void ApplyDefaultExportPath(std::wstring&) noexcept;
 	void LoadFromFile(std::fstream& File);
 	void SaveToFile(std::fstream& File);
 

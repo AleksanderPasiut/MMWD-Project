@@ -6,6 +6,7 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::InitDialog(HWND hwnd) noexcept
 	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_KF, std::to_wstring(*dltal.kf).c_str());
 	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_TABOO_MAX_SIZE, std::to_wstring(*dltal.taboo_max_size).c_str());
 	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_MAX_ITERATIONS, std::to_wstring(*dltal.max_iterations).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_TEXT_EXPORT_PATH, dltal.export_path->c_str());
 }
 void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextKf(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -40,6 +41,17 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextMaxIterations(HWND hwnd, WPAR
 		}
 	}
 }
+void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextExportPath(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
+{
+	switch(HIWORD(wParam))
+	{
+		case EN_SETFOCUS:
+		{
+			PostMessage(GetDlgItem(hwnd, LOWORD(wParam)), EM_SETSEL, 0, -1);
+			break;
+		}
+	}
+}
 void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd) noexcept
 {
 	wchar_t buffer[30];
@@ -49,6 +61,10 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd) noexcept
 	size_t taboo_max_size = std::stoll(std::wstring(buffer));
 	GetDlgItemTextW(hwnd, CTRL_EDIT_TEXT_MAX_ITERATIONS, buffer, 30);
 	size_t max_iterations = std::stoll(std::wstring(buffer));
+
+	int length = GetWindowTextLengthW(GetDlgItem(hwnd, CTRL_EDIT_TEXT_EXPORT_PATH))+1;
+	std::wstring export_path(length, 0);
+	GetDlgItemTextW(hwnd, CTRL_EDIT_TEXT_EXPORT_PATH, const_cast<wchar_t*>(export_path.c_str()), length);
 
 	if (kf < 0)
 		MessageBox(hwnd, L"Wartoœæ wspó³czynnika kary musi byæ dodatnia.", L"B³¹d", MB_OK);
@@ -61,6 +77,7 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd) noexcept
 		*dltal.kf = kf;
 		*dltal.taboo_max_size = taboo_max_size;
 		*dltal.max_iterations = max_iterations;
+		*dltal.export_path = export_path;
 		EndDialog(hwnd, 0);
 	}
 }
@@ -82,6 +99,7 @@ BOOL CALLBACK DialogLaunchTabooAlgorithm(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				case CTRL_EDIT_TEXT_KF: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextKf(hwnd, wParam, lParam); break;
 				case CTRL_EDIT_TEXT_TABOO_MAX_SIZE: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextTabooMaxSize(hwnd, wParam, lParam); break;
 				case CTRL_EDIT_TEXT_MAX_ITERATIONS: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextMaxIterations(hwnd, wParam, lParam); break;
+				case CTRL_EDIT_TEXT_EXPORT_PATH: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextExportPath(hwnd, wParam, lParam); break;
 				case CTRL_OK: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(hwnd); break;
 			}
 			break;
