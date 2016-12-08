@@ -32,6 +32,7 @@ class BOARD
 
 	void NewObject(OBJECT*) noexcept;
 	void DeleteSelected() noexcept;
+	void ClearSolution() noexcept;
 	void Clear() noexcept;
 
 	void PaintGrid() const noexcept;

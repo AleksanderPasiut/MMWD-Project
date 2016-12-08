@@ -42,6 +42,7 @@ class MAIN_WINDOW
 
 	void SetBoard(BOARD* board) noexcept;
 	void MoveObject(WPARAM wParam, LPARAM lParam) noexcept;
+	void ClearSolution() noexcept;
 	void ClearTable() noexcept;
 	void ShowGridAction() noexcept;
 	void ShowObjectInfoAction() noexcept;

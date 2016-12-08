@@ -42,6 +42,14 @@ void BOARD::DeleteSelected() noexcept
 			return;
 		}
 }
+void BOARD::ClearSolution() noexcept
+{
+	for (auto it = connections.begin(); it != connections.end(); it++)
+		delete *it;
+
+	connections.clear();
+	algorithm.best_iteration = 0;
+}
 void BOARD::Clear() noexcept
 {
 	for (auto it = connections.begin(); it != connections.end(); it++)

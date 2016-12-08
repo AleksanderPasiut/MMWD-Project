@@ -76,6 +76,11 @@ void MAIN_WINDOW::MoveObject(WPARAM wParam, LPARAM lParam) noexcept
 	board->selected->pos = LParamToLogicPt(lParam);
 	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
 }
+void MAIN_WINDOW::ClearSolution() noexcept
+{
+	board->ClearSolution();
+	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+}
 void MAIN_WINDOW::ClearTable() noexcept
 {
 	board->Clear();
@@ -179,6 +184,7 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 						case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
 						case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
 						case PMA_DELETE: board->DeleteSelected(); break;
+						case PM_CLEAR_SOLUTION: ClearSolution(); break;
 						case PM_CLEAR_TABLE: ClearTable(); break;
 						case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
 						case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
