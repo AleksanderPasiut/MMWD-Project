@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <forward_list>
 #include <cmath>
 #include <time.h>
 #include <fstream>
@@ -108,7 +109,7 @@ point taboo_search(point s0, size_t limit, size_t taboo_size)
 
 int main()
 {
-	point solution;
+	/*point solution;
 	solution = brute_force();
 	cout << "brute force solution: " << endl;
 	cout << "f(" << solution.x << " " << solution.y << ") = " << f(solution) << endl;
@@ -118,6 +119,7 @@ int main()
 	cout << "taboo search solution: " << endl;
 	cout << "initial solution: " << s0.x << " " << s0.y << endl;
 	cout << "f(" << solution.x << " " << solution.y << ") = " << f(solution) << endl;
+	*/
 
 	cin.get();
 	cin.ignore();

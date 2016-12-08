@@ -9,6 +9,7 @@
 #define CTRL_EDIT_TEXT_MAX_ITERATIONS 0x33
 #define CTRL_EDIT_TEXT_EXPORT_PATH 0x34
 #define CTRL_OK 0x01
+#define CTRL_CANCEL 0x02
 
 struct DIALOG_LAUNCH_TABOO_ALGORITHM_LPARAM
 {
@@ -27,7 +28,7 @@ class DIALOG_LAUNCH_TABOO_ALGORITHM
 	static void ProcessEditTextTabooMaxSize(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
 	static void ProcessEditTextMaxIterations(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
 	static void ProcessEditTextExportPath(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept;
-	static void ProcessEndDialog(HWND hwnd) noexcept;
+	static void ProcessEndDialog(HWND hwnd, WORD exitCode) noexcept;
 
 	friend BOOL CALLBACK DialogLaunchTabooAlgorithm(HWND, UINT, WPARAM, LPARAM) noexcept;
 };

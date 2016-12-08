@@ -52,7 +52,7 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextExportPath(HWND hwnd, WPARAM 
 		}
 	}
 }
-void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd) noexcept
+void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd, WORD exitCode) noexcept
 {
 	wchar_t buffer[30];
 	GetDlgItemTextW(hwnd, CTRL_EDIT_TEXT_KF, buffer, 30);
@@ -78,7 +78,8 @@ void DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(HWND hwnd) noexcept
 		*dltal.taboo_max_size = taboo_max_size;
 		*dltal.max_iterations = max_iterations;
 		*dltal.export_path = export_path;
-		EndDialog(hwnd, 0);
+
+		EndDialog(hwnd, exitCode == CTRL_OK ? 1 : 0);
 	}
 }
 
@@ -100,7 +101,8 @@ BOOL CALLBACK DialogLaunchTabooAlgorithm(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				case CTRL_EDIT_TEXT_TABOO_MAX_SIZE: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextTabooMaxSize(hwnd, wParam, lParam); break;
 				case CTRL_EDIT_TEXT_MAX_ITERATIONS: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextMaxIterations(hwnd, wParam, lParam); break;
 				case CTRL_EDIT_TEXT_EXPORT_PATH: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEditTextExportPath(hwnd, wParam, lParam); break;
-				case CTRL_OK: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(hwnd); break;
+				case CTRL_OK:
+				case CTRL_CANCEL: DIALOG_LAUNCH_TABOO_ALGORITHM::ProcessEndDialog(hwnd, LOWORD(wParam)); break;
 			}
 			break;
 		}

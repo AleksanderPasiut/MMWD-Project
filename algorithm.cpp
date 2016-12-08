@@ -17,9 +17,7 @@ ALGORITHM::ALGORITHM(std::vector<OBJECT*>& objects,	std::vector<PIPE_TYPE*>& pip
 	taboo_max_size(400),
 	best_iteration(0),
 	max_iterations(2000)
-{
-
-}
+{}
 
 void ALGORITHM::RefreshTotalObjectValues(const std::vector<CONNECTION*>& tab) noexcept
 {
@@ -297,8 +295,6 @@ void ALGORITHM::LoadFromFile(std::fstream& File)
 	File.read(reinterpret_cast<char*>(&kf), sizeof(double));
 	File.read(reinterpret_cast<char*>(&taboo_max_size), sizeof(size_t));
 	File.read(reinterpret_cast<char*>(&max_iterations), sizeof(size_t));
-
-
 }
 void ALGORITHM::SaveToFile(std::fstream& File)
 {

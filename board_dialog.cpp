@@ -37,15 +37,16 @@ void BOARD::LaunchTabooAlgorithm() noexcept
 		&algorithm.export_path
 	};
 
-	DialogBoxParam(0,
-				   L"dialog_launch_taboo_algorithm",
-				   target->GetHwnd(),
-				   reinterpret_cast<DLGPROC>(DialogLaunchTabooAlgorithm),
-				   reinterpret_cast<LPARAM>(&dltal));
-
-	EnableWindow(target->GetHwnd(), false);
-	DWORD ThreadId;
-	algorithm.hThread = CreateThread(0, 0, AlgorithmThreadProc, this, 0, &ThreadId);
+	if (DialogBoxParam(0,
+					   L"dialog_launch_taboo_algorithm",
+					   target->GetHwnd(),
+					   reinterpret_cast<DLGPROC>(DialogLaunchTabooAlgorithm),
+					   reinterpret_cast<LPARAM>(&dltal)))
+	{
+		EnableWindow(target->GetHwnd(), false);
+		DWORD ThreadId;
+		algorithm.hThread = CreateThread(0, 0, AlgorithmThreadProc, this, 0, &ThreadId);
+	}
 }
 DWORD WINAPI AlgorithmThreadProc(void* arg) noexcept
 {
