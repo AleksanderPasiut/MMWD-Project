@@ -33,6 +33,19 @@ void ALGORITHM::RefreshTotalObjectValues(const std::vector<CONNECTION*>& tab) no
 		(*it)->obj_target->total_capabilities += (*it)->pipe->capacity;
 	}
 }
+void ALGORITHM::RefreshObjectValues(double& old_source, double& old_target, OBJECT* source, OBJECT* target, double capacity) noexcept
+{
+	old_source = source->total_need;
+	old_target = target->total_capabilities;
+
+	source->total_need += capacity;
+	target->total_capabilities += capacity;
+}
+void ALGORITHM::RestoreObjectValues(OBJECT* source, OBJECT* target, double old_source, double old_target) noexcept
+{
+	source->total_need = old_source;
+	target->total_capabilities = old_target;
+}
 bool ALGORITHM::IsSolutionAcceptable() const noexcept
 {
 	for (auto it = objects.begin(); it != objects.end(); it++)
@@ -118,6 +131,14 @@ double ALGORITHM::OutOfAcceptance() const noexcept
 		ret += max((*it)->total_need - (*it)->total_capabilities, 0);
 	return ret;
 }
+double ALGORITHM::OutOfAcceptance(const CONNECTION& connection, double pipe_capacity_diff) const noexcept
+{
+	return
+		max(connection.obj_source->total_need - connection.obj_source->total_capabilities + pipe_capacity_diff, 0) +
+		max(connection.obj_target->total_need - connection.obj_target->total_capabilities - pipe_capacity_diff, 0) -
+		max(connection.obj_source->total_need - connection.obj_source->total_capabilities, 0) - 
+		max(connection.obj_target->total_need - connection.obj_target->total_capabilities, 0);
+}
 bool ALGORITHM::InTabooList(const std::vector<MOVE*>& list, const MOVE& move) const noexcept
 {
 	for (auto it = list.begin(); it != list.end(); it++)
@@ -143,6 +164,7 @@ void ALGORITHM::Core() noexcept
 
 	RefreshTotalObjectValues(s.tab);
 	double sF = SolutionCost(s.tab)+kf*cT*OutOfAcceptance();
+	double sBestF = sF;
 
 	std::vector<MOVE*> tabooList;
 	tabooList.reserve(taboo_max_size);
@@ -173,22 +195,29 @@ void ALGORITHM::Core() noexcept
 						{
 							CONNECTION con(*it, *jt, *mt);	
 							
-							CONNECTION* old = *kt;				// simplified replacement
-							CandidateMove.Assign(old, &con);
+							CONNECTION& old = **kt;				// simplified replacement
+							CandidateMove.Assign(&old, &con);
 
 							if (InTabooList(tabooList, CandidateMove))
 								continue;
 							
 							*kt = &con;
-							RefreshTotalObjectValues(Candidate.tab);
-							double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+
+							//RefreshTotalObjectValues(Candidate.tab);
+							double old_source, old_target;
+							RefreshObjectValues(old_source, old_target, old.obj_source, old.obj_target, -old.pipe->capacity);
+							
+							//double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+							double candF = sF + con.Cost(g1, g2) - old.Cost(g1, g2) + kf*cT*(OutOfAcceptance(con, con.pipe->capacity) - OutOfAcceptance(con, old.pipe->capacity));		
+							
 							if (bestF > candF)
 							{
 								bestF = candF;
 								bestCandidate = Candidate;
 								bestCandidateMove = CandidateMove;
 							}
-							*kt = old;
+							RestoreObjectValues(old.obj_source, old.obj_target, old_source, old_target);
+							*kt = &old;
 						}
 						exists = true; 
 						break;
@@ -205,8 +234,12 @@ void ALGORITHM::Core() noexcept
 							continue;
 							
 						Candidate.tab.push_back(&con);				// addition
-						RefreshTotalObjectValues(Candidate.tab);
-						double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+						
+						//RefreshTotalObjectValues(Candidate.tab);
+											
+						//double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+						double candF = sF + con.Cost(g1, g2) + kf*cT*OutOfAcceptance(con, con.pipe->capacity);
+						
 						if (bestF > candF)
 						{
 							bestF = candF;
@@ -214,25 +247,34 @@ void ALGORITHM::Core() noexcept
 							bestCandidateMove = CandidateMove;
 						}
 						Candidate.tab.pop_back();
-
+						
 						for (auto kt = Candidate.tab.begin(); kt != Candidate.tab.end(); kt++)
 						{
-							CONNECTION* old = *kt;				// multiple replacement
-							CandidateMove.Assign(old, &con);
+							CONNECTION& old = **kt;				// multiple replacement
+							CandidateMove.Assign(&old, &con);
 
 							if (InTabooList(tabooList, CandidateMove))
 								continue;
 							
 							*kt = &con;
-							RefreshTotalObjectValues(Candidate.tab);
-							double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+							
+							//RefreshTotalObjectValues(Candidate.tab);
+							double old_source, old_target;
+							RefreshObjectValues(old_source, old_target, old.obj_source, old.obj_target, -old.pipe->capacity);
+
+							//double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+							double candF = sF + con.Cost(g1, g2) - old.Cost(g1, g2) + kf*cT*(OutOfAcceptance(con, con.pipe->capacity) - OutOfAcceptance(old, old.pipe->capacity));
+
 							if (bestF > candF)
 							{
 								bestF = candF;
 								bestCandidate = Candidate;
 								bestCandidateMove = CandidateMove;
 							}
-							*kt = old;
+
+							RestoreObjectValues(old.obj_source, old.obj_target, old_source, old_target);
+
+							*kt = &old;
 						}
 					}
 				}
@@ -240,25 +282,36 @@ void ALGORITHM::Core() noexcept
 		
 		for (auto kt = Candidate.tab.begin(); kt != Candidate.tab.end(); kt++)
 		{
-			CONNECTION* old = *kt;
-			CandidateMove.Assign(MOVE_DELETE, old); // deletion
+			CONNECTION& old = **kt;
+			CandidateMove.Assign(MOVE_DELETE, &old); // deletion
 
 			if (InTabooList(tabooList, CandidateMove))
 				continue;
 
 			kt = Candidate.tab.erase(kt);
-			RefreshTotalObjectValues(Candidate.tab);
-			double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+
+			//RefreshTotalObjectValues(Candidate.tab);
+			double old_source, old_target;
+			RefreshObjectValues(old_source, old_target, old.obj_source, old.obj_target, -old.pipe->capacity);
+
+			//double candF = SolutionCost(Candidate.tab)+kf*cT*OutOfAcceptance();
+			double candF = sF - old.Cost(g1, g2) - kf*cT*OutOfAcceptance(old, old.pipe->capacity); 
+			
 			if (bestF > candF)
 			{
 				bestF = candF;
 				bestCandidate = Candidate;
 				bestCandidateMove = CandidateMove;
 			}
-			kt = Candidate.tab.insert(kt, old);
+
+			RestoreObjectValues(old.obj_source, old.obj_target, old_source, old_target);
+
+			kt = Candidate.tab.insert(kt, &old);
 		}
 
 		s = bestCandidate;
+		sF = bestF;
+		RefreshTotalObjectValues(s.tab);
 		tabooList.push_back(new MOVE(bestCandidateMove));
 		if (tabooList.size() > taboo_max_size)
 		{
@@ -268,9 +321,9 @@ void ALGORITHM::Core() noexcept
 
 		FS << bestF << std::endl;
 
-		if (sF > bestF)
+		if (sBestF > bestF)
 		{
-			sF = bestF;
+			sBestF = bestF;
 			sBest = bestCandidate;
 			best_iteration = iteration;
 		}

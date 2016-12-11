@@ -31,6 +31,8 @@ class ALGORITHM
 	ALGORITHM& operator= (const ALGORITHM&) = delete;
 
 	void RefreshTotalObjectValues(const std::vector<CONNECTION*>&) noexcept;
+	void RefreshObjectValues(double& old_source, double& old_target, OBJECT* source, OBJECT* target, double capacity) noexcept;
+	void RestoreObjectValues(OBJECT* source, OBJECT* target, double old_source, double old_target) noexcept;
 	bool IsSolutionAcceptable() const noexcept;
 	double SolutionCost(const std::vector<CONNECTION*>&) const noexcept;
 	void ClearConnections() noexcept;
@@ -38,6 +40,7 @@ class ALGORITHM
 	double PipeCapacityToPrice(double capacity) const noexcept;
 	double func_cT() const noexcept;
 	double OutOfAcceptance() const noexcept;
+	double OutOfAcceptance(const CONNECTION& connection, double pipe_capacity_change) const noexcept;
 	bool InTabooList(const std::vector<MOVE*>&, const MOVE& move) const noexcept;
 	void Core() noexcept;
 	
