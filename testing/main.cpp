@@ -121,6 +121,7 @@ int main()
 	cout << "f(" << solution.x << " " << solution.y << ") = " << f(solution) << endl;
 	*/
 
+
 	cin.get();
 	cin.ignore();
 	return 0;

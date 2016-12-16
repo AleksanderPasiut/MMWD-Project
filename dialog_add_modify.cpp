@@ -35,17 +35,59 @@ void SelectContent(HWND hwnd, WPARAM wParam) noexcept
 		}
 	}
 }
+bool CheckingOPValues(HWND hwnd, const OBJECT_PROPERTIES* op)
+{
+	if (op->self_need < 0)
+	{
+		MessageBoxW(hwnd, L"Zapotrzebowanie nie mo¿e byæ ujemne.", L"B³¹d", MB_OK);
+		return true;
+	}
+	if (op->self_capabilities < 0)
+	{
+		MessageBoxW(hwnd, L"Wydajnoœæ nie mo¿e byæ ujemna.", L"B³¹d", MB_OK);
+		return true;
+	}
+	if (op->self_capabilities == 0 && op->self_need == 0)
+	{
+		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie zerowe.", L"B³¹d", MB_OK);
+		return true;
+	}
+	if (op->self_capabilities != 0 && op->self_need != 0)
+	{
+		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie niezerowe.", L"B³¹d", MB_OK);
+		return true;
+	}
+
+	return false;
+}
 void SaveDialog(HWND hwnd, OBJECT_PROPERTIES* op) noexcept
 {
-	wchar_t buffer[30];
-	GetDlgItemTextW(hwnd, CTRL_EDIT_POS_X, buffer, 30);
-	op->pos_x = std::stof(std::wstring(buffer));
-	GetDlgItemTextW(hwnd, CTRL_EDIT_POS_Y, buffer, 30);
-	op->pos_y = std::stof(std::wstring(buffer));
-	GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_NEED, buffer, 30);
-	op->self_need = std::stof(std::wstring(buffer));
-	GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_CAPABILITIES, buffer, 30);
-	op->self_capabilities = std::stof(std::wstring(buffer));
+	try
+	{
+		wchar_t buffer[30];
+		
+		GetDlgItemTextW(hwnd, CTRL_EDIT_POS_X, buffer, 30);
+		op->pos_x = std::stof(std::wstring(buffer));
+
+		GetDlgItemTextW(hwnd, CTRL_EDIT_POS_Y, buffer, 30);
+		op->pos_y = std::stof(std::wstring(buffer));
+
+		GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_NEED, buffer, 30);
+		op->self_need = std::stof(std::wstring(buffer));
+
+		GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_CAPABILITIES, buffer, 30);
+		op->self_capabilities = std::stof(std::wstring(buffer));
+
+		if (CheckingOPValues(hwnd, op))
+			return;
+
+		EndDialog(hwnd, 1);
+	}
+	catch(...)
+	{
+		MessageBoxW(hwnd, L"B³¹d wprowadzonej wartoœci.", L"B³¹d", MB_OK);
+		return;
+	}
 }
 BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -66,22 +108,9 @@ BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				case CTRL_EDIT_POS_X:
 				case CTRL_EDIT_POS_Y:
 				case CTRL_EDIT_SELF_NEED:
-				case CTRL_EDIT_SELF_CAPABILITIES:
-				{
-					SelectContent(hwnd, wParam);
-					break;
-				}
-				case CTRL_OK:
-				{
-					SaveDialog(hwnd, op);
-					EndDialog(hwnd, 1);
-					break;
-				}
-				case CTRL_CANCEL:
-				{
-					EndDialog(hwnd, 0);
-					break;
-				}
+				case CTRL_EDIT_SELF_CAPABILITIES: SelectContent(hwnd, wParam); break;
+				case CTRL_OK: SaveDialog(hwnd, op); break;
+				case CTRL_CANCEL: EndDialog(hwnd, 0); break;
 			}
 			break;
 		}
@@ -92,31 +121,6 @@ BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 void DIALOG_ADD_MODIFY::SetBoard(BOARD* board) noexcept
 {
 	this->board = board;
-}
-bool CheckingOPValues(HWND hwnd, const OBJECT_PROPERTIES* op)
-{
-	if (op->self_capabilities < 0)
-	{
-		MessageBoxW(hwnd, L"Wydajnoœæ nie mo¿e byæ ujemna.", L"B³¹d", MB_OK);
-		return true;
-	}
-	if (op->self_need < 0)
-	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie nie mo¿e byæ ujemne.", L"B³¹d", MB_OK);
-		return true;
-	}
-	if (op->self_capabilities == 0 && op->self_need == 0)
-	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie zerowe.", L"B³¹d", MB_OK);
-		return true;
-	}
-	if (op->self_capabilities != 0 && op->self_need != 0)
-	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie niezerowe.", L"B³¹d", MB_OK);
-		return true;
-	}
-
-	return false;
 }
 void DIALOG_ADD_MODIFY::Dialog(HWND hwnd, D2D1_POINT_2F lastRClick) const noexcept
 {
@@ -146,9 +150,6 @@ void DIALOG_ADD_MODIFY::Dialog(HWND hwnd, D2D1_POINT_2F lastRClick) const noexce
 						reinterpret_cast<DLGPROC>(DialogAddModifyProc),
 						reinterpret_cast<LPARAM>(&op)))
 	{
-		if (CheckingOPValues(hwnd, &op))
-			return;
-
 		if (board->selected)
 		{
 			board->selected->pos.x = op.pos_x;

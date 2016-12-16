@@ -19,7 +19,7 @@ void BOARD::LoadFromFile(std::fstream& File)
 		File.read(reinterpret_cast<char*>(&pos), sizeof(D2D1_POINT_2F));
 		File.read(reinterpret_cast<char*>(&self_capabilities), sizeof(double));
 		File.read(reinterpret_cast<char*>(&self_need), sizeof(double));
-		objects.push_back(new OBJECT(pos, self_need, self_capabilities));	
+		objects.push_back(new OBJECT(pos, self_need, self_capabilities));
 	}	
 
 	size_t pipe_types_amount;
@@ -40,10 +40,20 @@ void BOARD::LoadFromFile(std::fstream& File)
 		File.read(reinterpret_cast<char*>(&obj_source_id), sizeof(unsigned));
 		File.read(reinterpret_cast<char*>(&obj_target_id), sizeof(unsigned));
 		File.read(reinterpret_cast<char*>(&pipe_id), sizeof(unsigned));
+
+		if (obj_source_id >= objects_amount || obj_target_id >= objects_amount || pipe_id >= pipe_types_amount)
+		{
+			connections_amount = i;
+			algorithm.best_iteration = 0;
+			MessageBoxW(target->GetHwnd(), L"B³¹d odczytu rozwi¹zania.", L"B³¹d", MB_OK);
+			break;
+		}
+
 		connections.push_back(new CONNECTION(objects[obj_source_id], objects[obj_target_id], pipe_types[pipe_id]));
 	}
 
 	algorithm.RefreshTotalObjectValues(connections);
+	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }
 void BOARD::SaveToFile(std::fstream& File)
 {
@@ -73,12 +83,18 @@ void BOARD::SaveToFile(std::fstream& File)
 		unsigned i = 0;
 		for (auto jt = objects.begin(); jt != objects.end(); jt++, i++)
 			if (*jt == (*it)->obj_source)
+			{
 				File.write(reinterpret_cast<const char*>(&i), sizeof(unsigned));
+				break;
+			}
 
 		i = 0;
 		for (auto jt = objects.begin(); jt != objects.end(); jt++, i++)
 			if (*jt == (*it)->obj_target)
+			{
 				File.write(reinterpret_cast<const char*>(&i), sizeof(unsigned));
+				break;
+			}
 
 		i = 0;
 		for (auto jt = pipe_types.begin(); jt != pipe_types.end(); jt++, i++)

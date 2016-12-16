@@ -27,8 +27,27 @@ void BOARD::ManagePumpingSystemCost() noexcept
 
 	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }
+bool BOARD::CheckTabooAlgorithmLaunch() const noexcept
+{
+	if (objects.size() == 0)
+	{
+		MessageBoxW(target->GetHwnd(), L"Nie ma ¿adnych obiektów do po³¹czenia.", L"B³¹d", MB_OK);
+		return true;
+	}
+
+	if (pipe_types.size() == 0)
+	{
+		MessageBoxW(target->GetHwnd(), L"Nie ma ¿adnych rodzajów rur.", L"B³¹d", MB_OK);
+		return true;
+	}
+
+	return false;
+}
 void BOARD::LaunchTabooAlgorithm() noexcept
 {
+	if (CheckTabooAlgorithmLaunch())
+		return;
+
 	DIALOG_LAUNCH_TABOO_ALGORITHM_LPARAM dltal = 
 	{
 		&algorithm.kf,
@@ -74,7 +93,8 @@ void BOARD::PresentSolutionDetails() noexcept
 	double cost = algorithm.SolutionCost(connections);
 	double curry = algorithm.kf*algorithm.func_cT()*algorithm.OutOfAcceptance();
 	wstring text = wstring(L"Koszt bie¿¹cego rozwi¹zania wynosi: ")+to_wstring(cost)+wstring(L"\n");
-	text += wstring(L"Wartoœæ funkcji kary: ")+to_wstring(curry);
+	text += wstring(L"Wartoœæ funkcji kary: ")+to_wstring(curry)+wstring(L"\n");
+	text += wstring(L"Indeks iteracji, w której uzyskane zosta³o najlepsze rozwi¹zanie: ") + to_wstring(algorithm.best_iteration);
 	MessageBox(target->GetHwnd(), text.c_str(), L"Szczegó³y bie¿¹cego rozwi¹zania", MB_OK);
 }
 void BOARD::PresentBestIteration() noexcept

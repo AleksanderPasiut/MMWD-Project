@@ -41,6 +41,7 @@ class BOARD
 
 	void ManagePipeTypes() noexcept;
 	void ManagePumpingSystemCost() noexcept;
+	bool CheckTabooAlgorithmLaunch() const noexcept;
 	void LaunchTabooAlgorithm() noexcept;
 	friend DWORD WINAPI AlgorithmThreadProc(void*) noexcept;
 	void BreakAlgorithm() noexcept;

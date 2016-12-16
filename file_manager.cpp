@@ -54,7 +54,8 @@ BOOL FILE_MANAGER::OpenFileDialog() noexcept
 {
 	openFileName.lpstrTitle = L"Otwórz konfiguracjê";
 	BOOL ret = GetOpenFileNameW(&openFileName);
-	ApplyDefaultExportPath();
+	if (ret)
+		ApplyDefaultExportPath();
 	return ret;
 }
 void FILE_MANAGER::ApplyOpenedFile() noexcept
@@ -95,9 +96,7 @@ void FILE_MANAGER::ApplyOpenedFile() noexcept
 BOOL FILE_MANAGER::SaveFileDialog() noexcept
 {
 	openFileName.lpstrTitle = L"Zapisz konfiguracjê";
-	BOOL ret = GetSaveFileNameW(&openFileName);
-	ApplyDefaultExportPath();
-	return ret;
+	return GetSaveFileNameW(&openFileName);
 }
 void FILE_MANAGER::SaveToFile() noexcept
 {
@@ -185,7 +184,10 @@ void FILE_MANAGER::NewFile() noexcept
 void FILE_MANAGER::OpenFile() noexcept
 {
 	if (OpenFileDialog())
+	{
+		ApplyDefaultExportPath();
 		ApplyOpenedFile();
+	}
 }
 void FILE_MANAGER::OpenTransferFile(WPARAM wParam) noexcept
 {
@@ -218,12 +220,18 @@ void FILE_MANAGER::OpenTransferFile(WPARAM wParam) noexcept
 void FILE_MANAGER::SaveFile() noexcept
 {
 	if (fileOpened[0] || SaveFileDialog())
+	{
+		ApplyDefaultExportPath();
 		SaveToFile();
+	}
 }
 void FILE_MANAGER::SaveFileAs() noexcept
 {
 	if (SaveFileDialog())
+	{
+		ApplyDefaultExportPath();
 		SaveToFile();
+	}
 }
 void FILE_MANAGER::FreeFileManager() noexcept
 {

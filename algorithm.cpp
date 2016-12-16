@@ -318,8 +318,7 @@ void ALGORITHM::Core() noexcept
 			delete *(tabooList.begin());
 			tabooList.erase(tabooList.begin());
 		}
-
-		FS << bestF << std::endl;
+		FS << bestF << " " << OutOfAcceptance() << std::endl;
 
 		if (sBestF > bestF)
 		{
@@ -332,6 +331,10 @@ void ALGORITHM::Core() noexcept
 	}
 
 	sBest.Export(connections);
+	FS << "Wspó³czynnik funkcji kary: " << kf << std::endl;
+	FS << "Maksymalny rozmiar listy taboo: " << taboo_max_size << std::endl;
+	FS << "Maksymalna liczba iteracji: " << max_iterations << std::endl;
+	FS << "Indeks iteracji, w której uzyskane zosta³o najlepsze rozwi¹zanie: " << best_iteration << std::endl;
 	FS.close();
 	progressBar.Hide();
 }
@@ -348,6 +351,7 @@ void ALGORITHM::LoadFromFile(std::fstream& File)
 	File.read(reinterpret_cast<char*>(&kf), sizeof(double));
 	File.read(reinterpret_cast<char*>(&taboo_max_size), sizeof(size_t));
 	File.read(reinterpret_cast<char*>(&max_iterations), sizeof(size_t));
+	File.read(reinterpret_cast<char*>(&best_iteration), sizeof(size_t));
 }
 void ALGORITHM::SaveToFile(std::fstream& File)
 {
@@ -357,5 +361,6 @@ void ALGORITHM::SaveToFile(std::fstream& File)
 	File.write(reinterpret_cast<const char*>(&kf), sizeof(double));
 	File.write(reinterpret_cast<const char*>(&taboo_max_size), sizeof(size_t));
 	File.write(reinterpret_cast<const char*>(&max_iterations), sizeof(size_t));
+	File.write(reinterpret_cast<const char*>(&best_iteration), sizeof(size_t));
 }
 
