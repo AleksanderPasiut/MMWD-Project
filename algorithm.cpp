@@ -143,7 +143,7 @@ double ALGORITHM::OutOfAcceptance(const CONNECTION& connection, double pipe_capa
 		max(connection.obj_source->total_need - connection.obj_source->total_capabilities, 0) - 
 		max(connection.obj_target->total_need - connection.obj_target->total_capabilities, 0);
 }
-inline bool InTabooList(CircularList<MOVE> list, const MOVE& move) noexcept
+inline bool InTabooList(CircularList<MOVE>& list, const MOVE& move) noexcept
 {
 	if (!list.size())
 		return false;
