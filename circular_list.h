@@ -158,29 +158,15 @@ typename CircularList<T>::iterator CircularList<T>::insert(iterator position, co
 		}
 		else throw std::exception("iterator invalid");
 	}
-	node* before = position.ptr;
-	if (before->next == head)
-	{
-		before->next = temp;
-		temp->prev = before;
-		temp->next = head;
-		head->prev = temp;
-	}
-	else if(position.ptr == head)
-	{
-		temp->next = head->next;
-		temp->prev = head;
-		head->next = temp;
-	}
-	else
-	{
-		++position;
-		node* after = position.ptr;
-		before->next = temp;
-		temp->prev = before;
-		after->prev = temp;
-		temp->next = after;
-	}
+
+	node* pos = position.ptr;
+
+	temp->prev = pos;
+	temp->next = pos->next;
+
+	pos->next->prev = temp;
+	pos->next = temp;
+
 	el_amount++;
 	position.ptr = temp;
 	return position;

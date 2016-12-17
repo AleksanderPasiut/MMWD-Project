@@ -329,9 +329,15 @@ void ALGORITHM::Core() noexcept
 		sF = bestF;
 		RefreshTotalObjectValues(s.tab);
 		if (tabooList.size() >= taboo_max_size)
+		{
+			tabooList.inc_head();
 			*(tabooList.ret_head()) = bestCandidateMove;
-		else tabooList.insert(tabooList.ret_head(), bestCandidateMove);
-		tabooList.inc_head();
+		}
+		else
+		{
+			tabooList.insert(tabooList.ret_head(), bestCandidateMove);
+			tabooList.inc_head();
+		}
 
 		FS << bestF << " " << OutOfAcceptance() << std::endl;
 
