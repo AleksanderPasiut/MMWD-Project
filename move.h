@@ -16,6 +16,7 @@ class MOVE
 	void Assign(MOVE_TYPE move_type, const CONNECTION* arg) noexcept;
 	void Assign(const CONNECTION* arg1, const CONNECTION* arg2) noexcept;
 
+public:
 	bool operator== (const MOVE&) const noexcept;
 
 	friend class ALGORITHM;

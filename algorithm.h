@@ -41,7 +41,6 @@ class ALGORITHM
 	double func_cT() const noexcept;
 	double OutOfAcceptance() const noexcept;
 	double OutOfAcceptance(const CONNECTION& connection, double pipe_capacity_change) const noexcept;
-	bool InTabooList(const std::vector<MOVE*>&, const MOVE& move) const noexcept;
 	void Core() noexcept;
 	
 	void ApplyDefaultExportPath(std::wstring&) noexcept;

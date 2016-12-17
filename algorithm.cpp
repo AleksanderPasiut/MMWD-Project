@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include "circular_list.h"
 
 #include "solution.h"
 #include "move.h"
@@ -142,11 +143,24 @@ double ALGORITHM::OutOfAcceptance(const CONNECTION& connection, double pipe_capa
 		max(connection.obj_source->total_need - connection.obj_source->total_capabilities, 0) - 
 		max(connection.obj_target->total_need - connection.obj_target->total_capabilities, 0);
 }
-bool ALGORITHM::InTabooList(const std::vector<MOVE*>& list, const MOVE& move) const noexcept
+inline bool InTabooList(CircularList<MOVE> list, const MOVE& move) noexcept
 {
-	for (auto it = list.begin(); it != list.end(); it++)
-		if (**it == move)
+	if (!list.size())
+		return false;
+
+	auto limit = list.ret_head();
+
+	do
+	{
+		if (*(list.ret_head()) == move)
+		{
+			list.set_head(limit);
 			return true;
+		}
+		else list.inc_head();
+	}
+	while(list.ret_head() != limit);
+
 	return false;
 }
 void ALGORITHM::Core() noexcept
@@ -169,8 +183,7 @@ void ALGORITHM::Core() noexcept
 	double sF = SolutionCost(s.tab)+kf*cT*OutOfAcceptance();
 	double sBestF = sF;
 
-	std::vector<MOVE*> tabooList;
-	tabooList.reserve(taboo_max_size);
+	CircularList<MOVE> tabooList;
 
 	for (size_t iteration = 0; iteration < max_iterations; iteration++)
 	{
@@ -315,12 +328,11 @@ void ALGORITHM::Core() noexcept
 		s = bestCandidate;
 		sF = bestF;
 		RefreshTotalObjectValues(s.tab);
-		tabooList.push_back(new MOVE(bestCandidateMove));
-		if (tabooList.size() > taboo_max_size)
-		{
-			delete *(tabooList.begin());
-			tabooList.erase(tabooList.begin());
-		}
+		if (tabooList.size() >= taboo_max_size)
+			*(tabooList.ret_head()) = bestCandidateMove;
+		else tabooList.insert(tabooList.ret_head(), bestCandidateMove);
+		tabooList.inc_head();
+
 		FS << bestF << " " << OutOfAcceptance() << std::endl;
 
 		if (sBestF > bestF)
