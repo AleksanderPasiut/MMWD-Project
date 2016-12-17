@@ -1,30 +1,17 @@
 #include <string>
 #include "dialog_add_modify.h"
 
-struct OBJECT_PROPERTIES
+DIALOG_ADD_MODIFY_LPARAM* DIALOG_ADD_MODIFY::daml = 0;
+void DIALOG_ADD_MODIFY::InitDialog(HWND hwnd) noexcept
 {
-	float pos_x;
-	float pos_y;
-	double self_need;
-	double self_capabilities;
-};
+	using namespace std;
 
-void InitDialog(HWND hwnd, const OBJECT_PROPERTIES* op) noexcept
-{
-	SetDlgItemTextW(hwnd,
-					CTRL_EDIT_POS_X,
-					std::to_wstring(op->pos_x).c_str());
-	SetDlgItemTextW(hwnd,
-					CTRL_EDIT_POS_Y,
-					std::to_wstring(op->pos_y).c_str());
-	SetDlgItemTextW(hwnd,
-					CTRL_EDIT_SELF_NEED,
-					std::to_wstring(op->self_need).c_str());
-	SetDlgItemTextW(hwnd,
-					CTRL_EDIT_SELF_CAPABILITIES,
-					std::to_wstring(op->self_capabilities).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_POS_X, to_wstring(daml->pos_x).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_POS_Y, to_wstring(daml->pos_y).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_SELF_NEED, to_wstring(daml->self_need).c_str());
+	SetDlgItemText(hwnd, CTRL_EDIT_SELF_CAPABILITIES, to_wstring(daml->self_capabilities).c_str());
 }
-void SelectContent(HWND hwnd, WPARAM wParam) noexcept
+void DIALOG_ADD_MODIFY::ProcessEditTextPosX(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
 {
 	switch(HIWORD(wParam))
 	{
@@ -35,133 +22,94 @@ void SelectContent(HWND hwnd, WPARAM wParam) noexcept
 		}
 	}
 }
-bool CheckingOPValues(HWND hwnd, const OBJECT_PROPERTIES* op)
+void DIALOG_ADD_MODIFY::ProcessEditTextPosY(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (op->self_need < 0)
+	switch(HIWORD(wParam))
 	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie nie mo¿e byæ ujemne.", L"B³¹d", MB_OK);
-		return true;
+		case EN_SETFOCUS:
+		{
+			PostMessage(GetDlgItem(hwnd, LOWORD(wParam)), EM_SETSEL, 0, -1);
+			break;
+		}
 	}
-	if (op->self_capabilities < 0)
-	{
-		MessageBoxW(hwnd, L"Wydajnoœæ nie mo¿e byæ ujemna.", L"B³¹d", MB_OK);
-		return true;
-	}
-	if (op->self_capabilities == 0 && op->self_need == 0)
-	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie zerowe.", L"B³¹d", MB_OK);
-		return true;
-	}
-	if (op->self_capabilities != 0 && op->self_need != 0)
-	{
-		MessageBoxW(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie niezerowe.", L"B³¹d", MB_OK);
-		return true;
-	}
-
-	return false;
 }
-void SaveDialog(HWND hwnd, OBJECT_PROPERTIES* op) noexcept
+void DIALOG_ADD_MODIFY::ProcessEditTextSelfNeed(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
+{
+	switch(HIWORD(wParam))
+	{
+		case EN_SETFOCUS:
+		{
+			PostMessage(GetDlgItem(hwnd, LOWORD(wParam)), EM_SETSEL, 0, -1);
+			break;
+		}
+	}
+}
+void DIALOG_ADD_MODIFY::ProcessEditTextSelfCapabilities(HWND hwnd, WPARAM wParam, LPARAM lParam) noexcept
+{
+	switch(HIWORD(wParam))
+	{
+		case EN_SETFOCUS:
+		{
+			PostMessage(GetDlgItem(hwnd, LOWORD(wParam)), EM_SETSEL, 0, -1);
+			break;
+		}
+	}
+}
+void DIALOG_ADD_MODIFY::ProcessEndDialog(HWND hwnd) noexcept
 {
 	try
 	{
+		using namespace std;
+
 		wchar_t buffer[30];
-		
 		GetDlgItemTextW(hwnd, CTRL_EDIT_POS_X, buffer, 30);
-		op->pos_x = std::stof(std::wstring(buffer));
-
+		daml->pos_x = stof(wstring(buffer));
 		GetDlgItemTextW(hwnd, CTRL_EDIT_POS_Y, buffer, 30);
-		op->pos_y = std::stof(std::wstring(buffer));
-
+		daml->pos_y = stof(wstring(buffer));
 		GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_NEED, buffer, 30);
-		op->self_need = std::stof(std::wstring(buffer));
-
+		daml->self_need = stof(wstring(buffer));
 		GetDlgItemTextW(hwnd, CTRL_EDIT_SELF_CAPABILITIES, buffer, 30);
-		op->self_capabilities = std::stof(std::wstring(buffer));
+		daml->self_capabilities = stof(wstring(buffer));
 
-		if (CheckingOPValues(hwnd, op))
-			return;
-
-		EndDialog(hwnd, 1);
+		if (daml->self_need < 0)
+			MessageBox(hwnd, L"Zapotrzebowanie nie mo¿e byæ ujemne.", L"B³¹d", MB_OK);
+		else if (daml->self_capabilities < 0)
+			MessageBox(hwnd, L"Wydajnoœæ nie mo¿e byæ ujemna.", L"B³¹d", MB_OK);
+		else if (daml->self_capabilities == 0 && daml->self_need == 0)
+			MessageBox(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie zerowe.", L"B³¹d", MB_OK);
+		else if (daml->self_capabilities != 0 && daml->self_need != 0)
+			MessageBox(hwnd, L"Zapotrzebowanie i wydajnoœæ nie mog¹ byæ jednoczeœnie niezerowe.", L"B³¹d", MB_OK);
+		else EndDialog(hwnd, 1);
 	}
 	catch(...)
 	{
-		MessageBoxW(hwnd, L"B³¹d wprowadzonej wartoœci.", L"B³¹d", MB_OK);
+		MessageBox(hwnd, L"B³¹d wprowadzonej wartoœci.", L"B³¹d", MB_OK);
 		return;
 	}
 }
-BOOL CALLBACK DialogAddModifyProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
+BOOL CALLBACK DialogAddModify(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	static OBJECT_PROPERTIES* op = 0;
-
 	switch(uMsg)
 	{
 		case WM_INITDIALOG:
 		{
-			op = reinterpret_cast<OBJECT_PROPERTIES*>(lParam);
-			InitDialog(hwnd, op);
+			DIALOG_ADD_MODIFY::daml = reinterpret_cast<DIALOG_ADD_MODIFY_LPARAM*>(lParam);
+			DIALOG_ADD_MODIFY::InitDialog(hwnd);
 			break;
 		}
 		case WM_COMMAND:
 		{
 			switch(LOWORD(wParam))
 			{
-				case CTRL_EDIT_POS_X:
-				case CTRL_EDIT_POS_Y:
-				case CTRL_EDIT_SELF_NEED:
-				case CTRL_EDIT_SELF_CAPABILITIES: SelectContent(hwnd, wParam); break;
-				case CTRL_OK: SaveDialog(hwnd, op); break;
+				case CTRL_EDIT_POS_X: DIALOG_ADD_MODIFY::ProcessEditTextPosX(hwnd, wParam, lParam); break;
+				case CTRL_EDIT_POS_Y: DIALOG_ADD_MODIFY::ProcessEditTextPosY(hwnd, wParam, lParam); break;
+				case CTRL_EDIT_SELF_NEED: DIALOG_ADD_MODIFY::ProcessEditTextSelfNeed(hwnd, wParam, lParam); break;
+				case CTRL_EDIT_SELF_CAPABILITIES: DIALOG_ADD_MODIFY::ProcessEditTextSelfCapabilities(hwnd, wParam, lParam); break;
+				case CTRL_OK: DIALOG_ADD_MODIFY::ProcessEndDialog(hwnd); break;
 				case CTRL_CANCEL: EndDialog(hwnd, 0); break;
 			}
 			break;
 		}
 	}
 	return FALSE;
-}
-
-void DIALOG_ADD_MODIFY::SetBoard(BOARD* board) noexcept
-{
-	this->board = board;
-}
-void DIALOG_ADD_MODIFY::Dialog(HWND hwnd, D2D1_POINT_2F lastRClick) const noexcept
-{
-	if (!board)
-		return;
-
-	OBJECT_PROPERTIES op;
-
-	if (board->selected)
-	{
-		op.pos_x = board->selected->pos.x;
-		op.pos_y = board->selected->pos.y;
-		op.self_need = board->selected->self_need;
-		op.self_capabilities = board->selected->self_capabilities;
-	}
-	else
-	{
-		op.pos_x = lastRClick.x;
-		op.pos_y = lastRClick.y;
-		op.self_need = 0;
-		op.self_capabilities = 0;
-	}
-
-	if (DialogBoxParamW(0,
-						L"dialog_add_modify",
-						hwnd,
-						reinterpret_cast<DLGPROC>(DialogAddModifyProc),
-						reinterpret_cast<LPARAM>(&op)))
-	{
-		if (board->selected)
-		{
-			board->selected->pos.x = op.pos_x;
-			board->selected->pos.y = op.pos_y;
-			board->selected->self_need = op.self_need;
-			board->selected->self_capabilities = op.self_capabilities;
-		}
-		else
-		{
-			board->NewObject(new OBJECT(D2D1::Point2F(op.pos_x, op.pos_y), op.self_need, op.self_capabilities));
-		}
-
-		RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-	}
 }

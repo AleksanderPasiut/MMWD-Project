@@ -69,40 +69,29 @@ void MAIN_WINDOW::SetBoard(BOARD* board) noexcept
 	this->board = board;
 	mwMenu.SetBoard(board);
 	mwPopupMenu.SetBoard(board);
-	dialogAddModify.SetBoard(board);
 }
 void MAIN_WINDOW::MoveObject(WPARAM wParam, LPARAM lParam) noexcept
 {
 	board->selected->pos = LParamToLogicPt(lParam);
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-}
-void MAIN_WINDOW::ClearSolution() noexcept
-{
-	board->ClearSolution();
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
-}
-void MAIN_WINDOW::ClearTable() noexcept
-{
-	board->Clear();
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+	Redraw();
 }
 void MAIN_WINDOW::ShowGridAction() noexcept
 {
 	board->grid = !board->grid;
 	mwMenu.Update();
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+	Redraw();
 }
 void MAIN_WINDOW::ShowObjectInfoAction() noexcept
 {
 	OBJECT::info = !OBJECT::info;
 	mwMenu.Update();
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+	Redraw();
 }
 void MAIN_WINDOW::ShowConnectionsInfoAction() noexcept
 {
 	CONNECTION::info = !CONNECTION::info;
 	mwMenu.Update();
-	RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT);
+	Redraw();
 }
 void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -181,13 +170,13 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 				{
 					switch(LOWORD(wParam))
 					{
-						case PMB_ADD_OBJECT: dialogAddModify.Dialog(hwnd, lastRClick); break;
-						case PMA_MODIFY: dialogAddModify.Dialog(hwnd, lastRClick); break;
-						case PMA_DELETE: board->DeleteSelected(); break;
-						case PM_CLEAR_SOLUTION: ClearSolution(); break;
-						case PM_CLEAR_TABLE: ClearTable(); break;
-						case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); break;
-						case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); break;
+						case PMB_ADD_OBJECT: board->AddAtPoint(lastRClick); Redraw(); break;
+						case PMA_MODIFY: board->ModifySelected(); Redraw(); break;
+						case PMA_DELETE: board->DeleteSelected(); Redraw(); break;
+						case PM_CLEAR_SOLUTION: board->ClearSolution(); Redraw(); break;
+						case PM_CLEAR_TABLE: board->Clear(); Redraw(); break;
+						case MWM_MANAGE_PIPE_TYPES: board->ManagePipeTypes(); Redraw(); break;
+						case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); Redraw(); break;
 						case MWM_LAUNCH_TABOO_ALGORITHM: board->LaunchTabooAlgorithm(); break;
 						case MWM_PRESENT_SOLUTION_DETAILS: board->PresentSolutionDetails(); break;
 						case MWM_SHOW_GRID: ShowGridAction(); break;

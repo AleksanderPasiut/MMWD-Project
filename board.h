@@ -39,6 +39,8 @@ class BOARD
 	void Paint() const noexcept;
 	OBJECT* UpdateSelected(const D2D1_POINT_2F&) noexcept;
 
+	void AddAtPoint(D2D1_POINT_2F pt) noexcept;
+	void ModifySelected() noexcept;
 	void ManagePipeTypes() noexcept;
 	void ManagePumpingSystemCost() noexcept;
 	bool CheckTabooAlgorithmLaunch() const noexcept;
@@ -55,7 +57,6 @@ class BOARD
 	friend class MAIN_WINDOW;
 	friend class MAIN_WINDOW_MENU;
 	friend class MAIN_WINDOW_POPUP_MENU;
-	friend class DIALOG_ADD_MODIFY;
 	friend class IO;
 	friend class PROGRAM;
 	friend class FILE_MANAGER;

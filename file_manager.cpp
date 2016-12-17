@@ -91,7 +91,12 @@ void FILE_MANAGER::ApplyOpenedFile() noexcept
 
 		UpdateMainWindowText();
 	}
-	catch(...) { MessageBoxW(hwnd, L"B³¹d odczytu konfiguracji", L"B³¹d", MB_OK); }
+	catch(...)
+	{
+		board->Clear();
+		fileOpened[0] = 0;
+		MessageBoxW(hwnd, L"B³¹d odczytu konfiguracji", L"B³¹d", MB_OK);
+	}
 }
 BOOL FILE_MANAGER::SaveFileDialog() noexcept
 {

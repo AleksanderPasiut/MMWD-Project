@@ -1,8 +1,41 @@
 #include "board.h"
+#include "dialog_add_modify.h"
 #include "dialog_manage_pipe_types.h"
 #include "dialog_manage_pumping_system_cost.h"
 #include "dialog_launch_taboo_algorithm.h"
 
+void BOARD::AddAtPoint(D2D1_POINT_2F pt) noexcept
+{
+	DIALOG_ADD_MODIFY_LPARAM daml = { pt.x, pt.y, 0, 0 };
+
+	if (DialogBoxParam(0,
+					   L"dialog_add_modify",
+					   target->GetHwnd(),
+					   reinterpret_cast<DLGPROC>(DialogAddModify),
+					   reinterpret_cast<LPARAM>(&daml)))
+	{
+		NewObject(new OBJECT(D2D1::Point2F(daml.pos_x, daml.pos_y), daml.self_need, daml.self_capabilities));
+	}
+}
+void BOARD::ModifySelected() noexcept
+{
+	if (!selected)
+		return;
+
+	DIALOG_ADD_MODIFY_LPARAM daml = { selected->pos.x, selected->pos.y, selected->self_need, selected->self_capabilities };
+
+	if (DialogBoxParam(0,
+					   L"dialog_add_modify",
+					   target->GetHwnd(),
+					   reinterpret_cast<DLGPROC>(DialogAddModify),
+					   reinterpret_cast<LPARAM>(&daml)))
+	{
+		selected->pos.x = daml.pos_x;
+		selected->pos.y = daml.pos_y;
+		selected->self_need = daml.self_need;
+		selected->self_capabilities = daml.self_capabilities;
+	}
+}
 void BOARD::ManagePipeTypes() noexcept
 {
 	DIALOG_MANAGE_PIPE_TYPES_LPARAM dmptl = { &pipe_types, &connections };
@@ -12,8 +45,6 @@ void BOARD::ManagePipeTypes() noexcept
 				   target->GetHwnd(),
 				   reinterpret_cast<DLGPROC>(DialogManagePipeTypes),
 				   reinterpret_cast<LPARAM>(&dmptl));
-
-	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }
 void BOARD::ManagePumpingSystemCost() noexcept
 {
@@ -24,8 +55,6 @@ void BOARD::ManagePumpingSystemCost() noexcept
 				   target->GetHwnd(),
 				   reinterpret_cast<DLGPROC>(DialogManagePumpingSystemCost),
 				   reinterpret_cast<LPARAM>(&dmpscl));
-
-	RedrawWindow(target->GetHwnd(), 0, 0, RDW_INTERNALPAINT);
 }
 bool BOARD::CheckTabooAlgorithmLaunch() const noexcept
 {
@@ -90,10 +119,9 @@ void BOARD::PresentSolutionDetails() noexcept
 {
 	using namespace std;
 	algorithm.RefreshTotalObjectValues(connections);
-	double cost = algorithm.SolutionCost(connections);
-	double curry = algorithm.kf*algorithm.func_cT()*algorithm.OutOfAcceptance();
-	wstring text = wstring(L"Koszt bie¿¹cego rozwi¹zania wynosi: ")+to_wstring(cost)+wstring(L"\n");
-	text += wstring(L"Wartoœæ funkcji kary: ")+to_wstring(curry)+wstring(L"\n");
+	wstring text = wstring(L"Koszt bie¿¹cego rozwi¹zania wynosi: ")+to_wstring(algorithm.SolutionCost(connections))+wstring(L"\n");
+	text += wstring(L"Wartoœæ wspó³czynnika cT funkcji kary: ")+to_wstring(algorithm.func_cT())+wstring(L"\n");
+	text += wstring(L"Ca³kowity rozmiar przekroczonych ograniczeñ: ")+to_wstring(algorithm.OutOfAcceptance())+wstring(L"\n");
 	text += wstring(L"Indeks iteracji, w której uzyskane zosta³o najlepsze rozwi¹zanie: ") + to_wstring(algorithm.best_iteration);
 	MessageBox(target->GetHwnd(), text.c_str(), L"Szczegó³y bie¿¹cego rozwi¹zania", MB_OK);
 }

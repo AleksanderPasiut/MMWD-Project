@@ -5,14 +5,7 @@
 #include <vector>
 #include "pipe_type.h"
 #include "connection.h"
-
-#define CTRL_NUMB 0
-#define CTRL_LISTBOX 0x11
-#define CTRL_EDIT_TEXT_CAPACITY 0x12
-#define CTRL_EDIT_TEXT_PRICE 0x13
-#define CTRL_ADD_PIPE_TYPE 0x14
-#define CTRL_DEL_PIPE_TYPE 0x15
-#define CTRL_OK 0x01
+#include "dialog_definitions.h"
 
 struct DIALOG_MANAGE_PIPE_TYPES_LPARAM
 {

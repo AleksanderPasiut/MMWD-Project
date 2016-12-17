@@ -21,7 +21,6 @@ class MAIN_WINDOW
 	MAIN_WINDOW_MENU mwMenu;
 	MAIN_WINDOW_POPUP_MENU mwPopupMenu;
 	VIEW_MANAGEMENT viewManagement;
-	DIALOG_ADD_MODIFY dialogAddModify;
 	WNDCLASSEXW wc;
 	HWND hwnd;
 	ID2D1HwndRenderTarget* target;
@@ -41,9 +40,8 @@ class MAIN_WINDOW
 	~MAIN_WINDOW() noexcept;
 
 	void SetBoard(BOARD* board) noexcept;
+	void Redraw() const noexcept { RedrawWindow(hwnd, 0, 0, RDW_INTERNALPAINT); }
 	void MoveObject(WPARAM wParam, LPARAM lParam) noexcept;
-	void ClearSolution() noexcept;
-	void ClearTable() noexcept;
 	void ShowGridAction() noexcept;
 	void ShowObjectInfoAction() noexcept;
 	void ShowConnectionsInfoAction() noexcept;

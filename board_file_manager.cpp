@@ -10,6 +10,9 @@ void BOARD::LoadFromFile(std::fstream& File)
 
 	algorithm.LoadFromFile(File);
 
+	char buffer[2];
+	File.read(buffer, 2);  // for debugging purposes
+
 	size_t objects_amount;
 	File.read(reinterpret_cast<char*>(&objects_amount), sizeof(size_t));
 	for (size_t i = 0; i < objects_amount; i++)
@@ -22,6 +25,8 @@ void BOARD::LoadFromFile(std::fstream& File)
 		objects.push_back(new OBJECT(pos, self_need, self_capabilities));
 	}	
 
+	File.read(buffer, 2);  // for debugging purposes
+
 	size_t pipe_types_amount;
 	File.read(reinterpret_cast<char*>(&pipe_types_amount), sizeof(size_t));
 	for (size_t i = 0; i < pipe_types_amount; i++)
@@ -31,6 +36,8 @@ void BOARD::LoadFromFile(std::fstream& File)
 		File.read(reinterpret_cast<char*>(&price), sizeof(double));
 		pipe_types.push_back(new PIPE_TYPE(capacity, price));
 	}
+
+	File.read(buffer, 2);  // for debugging purposes
 
 	size_t connections_amount;
 	File.read(reinterpret_cast<char*>(&connections_amount), sizeof(size_t));
@@ -42,12 +49,7 @@ void BOARD::LoadFromFile(std::fstream& File)
 		File.read(reinterpret_cast<char*>(&pipe_id), sizeof(unsigned));
 
 		if (obj_source_id >= objects_amount || obj_target_id >= objects_amount || pipe_id >= pipe_types_amount)
-		{
-			connections_amount = i;
-			algorithm.best_iteration = 0;
-			MessageBoxW(target->GetHwnd(), L"B³¹d odczytu rozwi¹zania.", L"B³¹d", MB_OK);
-			break;
-		}
+			throw 0;
 
 		connections.push_back(new CONNECTION(objects[obj_source_id], objects[obj_target_id], pipe_types[pipe_id]));
 	}
@@ -59,6 +61,8 @@ void BOARD::SaveToFile(std::fstream& File)
 {
 	algorithm.SaveToFile(File);
 
+	File.write("ox", 2); // for debugging purposes
+
 	size_t objects_amount = objects.size();
 	File.write(reinterpret_cast<const char*>(&objects_amount), sizeof(size_t));
 	for (auto it = objects.begin(); it != objects.end(); it++)
@@ -68,6 +72,8 @@ void BOARD::SaveToFile(std::fstream& File)
 		File.write(reinterpret_cast<const char*>(&(*it)->self_need), sizeof(double));
 	}
 
+	File.write("px", 2); // for debugging purposes
+
 	size_t pipe_types_amount = pipe_types.size();
 	File.write(reinterpret_cast<const char*>(&pipe_types_amount), sizeof(size_t));
 	for (auto it = pipe_types.begin(); it != pipe_types.end(); it++)
@@ -75,6 +81,8 @@ void BOARD::SaveToFile(std::fstream& File)
 		File.write(reinterpret_cast<const char*>(&(*it)->capacity), sizeof(double));
 		File.write(reinterpret_cast<const char*>(&(*it)->price), sizeof(double));
 	}
+
+	File.write("cx", 2); // for debugging purposes
 
 	size_t connections_amount = connections.size();
 	File.write(reinterpret_cast<const char*>(&connections_amount), sizeof(size_t));

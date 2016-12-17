@@ -73,8 +73,11 @@ void ALGORITHM::ClearConnections() noexcept
 
 double ALGORITHM::PipeCapacityToPrice(double capacity) const noexcept
 {
-	if (pipe_types.size() == 1)
-		return (*pipe_types.begin())->price;
+	switch(pipe_types.size())
+	{
+		case 0: return 0;
+		case 1: return (*pipe_types.begin())->price;
+	}		
 
 	// lower extrapolation
 	if (capacity < (*pipe_types.begin())->capacity)

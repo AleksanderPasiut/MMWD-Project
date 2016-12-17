@@ -2,11 +2,7 @@
 
 #include <Windows.h>
 #include <string>
-
-#define CTRL_NUMB 0
-#define CTRL_EDIT_TEXT_G1 0x21
-#define CTRL_EDIT_TEXT_G2 0x22
-#define CTRL_OK 0x01
+#include "dialog_definitions.h"
 
 struct DIALOG_MANAGE_PUMPING_SYSTEM_COST_LPARAM
 {
