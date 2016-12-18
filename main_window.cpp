@@ -179,6 +179,7 @@ void MAIN_WINDOW::EventProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 						case MWM_MANAGE_PUMPING_SYSTEM_COST: board->ManagePumpingSystemCost(); Redraw(); break;
 						case MWM_LAUNCH_TABOO_ALGORITHM: board->LaunchTabooAlgorithm(); break;
 						case MWM_PRESENT_SOLUTION_DETAILS: board->PresentSolutionDetails(); break;
+						case MWM_LAUNCH_TEST: board->LaunchTest(); break;
 						case MWM_SHOW_GRID: ShowGridAction(); break;
 						case MWM_SHOW_INFO_OBJECTS: ShowObjectInfoAction(); break;
 						case MWM_SHOW_INFO_CONNECTIONS: ShowConnectionsInfoAction(); break;

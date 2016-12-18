@@ -49,4 +49,5 @@ class ALGORITHM
 
 	friend class BOARD;
 	friend DWORD WINAPI AlgorithmThreadProc(void*) noexcept;
+	friend DWORD WINAPI TestThreadProc(void*) noexcept;
 };
