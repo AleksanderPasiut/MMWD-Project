@@ -43,7 +43,10 @@ void BOARD::LoadFromFile(std::fstream& File)
 	File.read(reinterpret_cast<char*>(&connections_amount), sizeof(size_t));
 	for (size_t i = 0; i < connections_amount; i++)
 	{
-		unsigned obj_source_id, obj_target_id, pipe_id;
+		unsigned obj_source_id = 0;
+		unsigned obj_target_id = 0;
+		unsigned pipe_id = 0;
+
 		File.read(reinterpret_cast<char*>(&obj_source_id), sizeof(unsigned));
 		File.read(reinterpret_cast<char*>(&obj_target_id), sizeof(unsigned));
 		File.read(reinterpret_cast<char*>(&pipe_id), sizeof(unsigned));

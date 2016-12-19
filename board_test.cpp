@@ -15,23 +15,26 @@ DWORD WINAPI TestThreadProc(void* arg) noexcept
 
 	wstring export_file = board.algorithm.export_path;
 
-	fstream FS(export_file, std::fstream::out);
+	fstream FS(export_file, fstream::out | fstream::binary);
 
-	board.algorithm.max_iterations = 1000;
+	board.algorithm.max_iterations = 3000;
 	board.algorithm.export_path = wstring(L"");
 
-	for (size_t taboo = 100; taboo <= 200; taboo += 5)
+	for (double kf_factor = 1.0; kf_factor < 1.8; kf_factor += 0.25)
 	{
-		for (double kf_factor = 1.0; kf_factor < 2.1; kf_factor += 0.5)
+		for (size_t taboo = 100; taboo <= 200; taboo += 5)
 		{
 			board.algorithm.taboo_max_size = taboo;
 			board.algorithm.kf = kf_factor;
 			board.algorithm.Core();
 
-			FS << taboo << " ";
-			FS << kf_factor << " ";
-			FS << board.algorithm.SolutionCost(board.connections) << " ";
-			FS << board.algorithm.best_iteration << endl;
+			if (board.algorithm.OutOfAcceptance() == 0)
+			{
+				FS << taboo << " ";
+				FS << kf_factor << " ";
+				FS << board.algorithm.SolutionCost(board.connections) << " ";
+				FS << board.algorithm.best_iteration << endl;
+			}
 		}
 	}
 	

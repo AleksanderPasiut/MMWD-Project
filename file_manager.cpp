@@ -67,7 +67,7 @@ void FILE_MANAGER::ApplyOpenedFile() noexcept
 	{
 		using namespace std;
 
-		fstream File(fileOpened, fstream::in);
+		fstream File(fileOpened, fstream::in | fstream::binary);
 
 		if (!File)
 			throw 0;
@@ -109,7 +109,7 @@ void FILE_MANAGER::SaveToFile() noexcept
 	{
 		using namespace std;
 
-		fstream File(fileOpened, fstream::out);
+		fstream File(fileOpened, fstream::out | fstream::binary);
 
 		if (!File)
 			throw 0;
@@ -213,7 +213,9 @@ void FILE_MANAGER::OpenTransferFile(WPARAM wParam) noexcept
 	if (argc < 2)
 		return;
 
-	memcpy(fileOpened, argv[1], lstrlenW(argv[1])*sizeof(wchar_t));
+	size_t length = lstrlenW(argv[1]);
+	memcpy(fileOpened, argv[1], length*sizeof(wchar_t));
+	fileOpened[length] = 0;
 	ApplyDefaultExportPath();
 
 	ApplyOpenedFile();
