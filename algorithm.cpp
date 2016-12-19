@@ -169,7 +169,7 @@ void ALGORITHM::Core() noexcept
 	progressBar.SetPos(0);
 	progressBar.Show();
 
-	std::fstream FS(export_path, std::fstream::out | std::fstream::binary);
+	std::fstream FS(export_path, std::fstream::out);
 
 	if (!FS && export_path.length() > 1)
 		MessageBox(0, L"B³¹d zapisu do pliku.", L"B³¹d", MB_OK);

@@ -15,14 +15,14 @@ DWORD WINAPI TestThreadProc(void* arg) noexcept
 
 	wstring export_file = board.algorithm.export_path;
 
-	fstream FS(export_file, fstream::out | fstream::binary);
+	fstream FS(export_file, fstream::out);
 
-	board.algorithm.max_iterations = 3000;
+	board.algorithm.max_iterations = 1000;
 	board.algorithm.export_path = wstring(L"");
 
-	for (double kf_factor = 1.0; kf_factor < 1.8; kf_factor += 0.25)
+	for (double kf_factor = 1.0; kf_factor < 2.1; kf_factor += 0.25)
 	{
-		for (size_t taboo = 100; taboo <= 200; taboo += 5)
+		for (size_t taboo = 90; taboo <= 210; taboo += 1)
 		{
 			board.algorithm.taboo_max_size = taboo;
 			board.algorithm.kf = kf_factor;
