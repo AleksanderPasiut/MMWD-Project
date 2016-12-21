@@ -20,21 +20,19 @@ DWORD WINAPI TestThreadProc(void* arg) noexcept
 	board.algorithm.max_iterations = 1000;
 	board.algorithm.export_path = wstring(L"");
 
-	for (double kf_factor = 1.0; kf_factor < 2.1; kf_factor += 0.25)
+	for (double kf_factor = 0.7; kf_factor < 1.1; kf_factor += 0.15)
 	{
-		for (size_t taboo = 90; taboo <= 210; taboo += 1)
+		for (size_t taboo = 100; taboo <= 160; taboo += 20)
 		{
 			board.algorithm.taboo_max_size = taboo;
 			board.algorithm.kf = kf_factor;
 			board.algorithm.Core();
 
-			if (board.algorithm.OutOfAcceptance() == 0)
-			{
-				FS << taboo << " ";
-				FS << kf_factor << " ";
-				FS << board.algorithm.SolutionCost(board.connections) << " ";
-				FS << board.algorithm.best_iteration << endl;
-			}
+			FS << taboo << " ";
+			FS << kf_factor << " ";
+			FS << board.algorithm.SolutionCost(board.connections) << " ";
+			FS << board.algorithm.best_iteration << " ";
+			FS << board.algorithm.OutOfAcceptance() << endl;
 		}
 	}
 	

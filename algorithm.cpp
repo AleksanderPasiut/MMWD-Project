@@ -212,6 +212,10 @@ void ALGORITHM::Core() noexcept
 							CONNECTION con(*it, *jt, *mt);	
 							
 							CONNECTION& old = **kt;				// simplified replacement
+
+							if (old == con)
+								continue;
+
 							CandidateMove.Assign(&old, &con);
 
 							if (InTabooList(tabooList, CandidateMove))
@@ -267,6 +271,10 @@ void ALGORITHM::Core() noexcept
 						for (auto kt = Candidate.tab.begin(); kt != Candidate.tab.end(); kt++)
 						{
 							CONNECTION& old = **kt;				// multiple replacement
+
+							if (con == old)
+								continue;
+
 							CandidateMove.Assign(&old, &con);
 
 							if (InTabooList(tabooList, CandidateMove))
@@ -351,6 +359,7 @@ void ALGORITHM::Core() noexcept
 		progressBar.SetPos(iteration);
 	}
 
+	RefreshTotalObjectValues(sBest.tab);
 	sBest.Export(connections);
 	FS << "Wspó³czynnik funkcji kary: " << kf << std::endl;
 	FS << "Maksymalny rozmiar listy taboo: " << taboo_max_size << std::endl;
