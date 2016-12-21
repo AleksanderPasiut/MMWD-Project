@@ -1,2 +1,2 @@
 # MMWD-Project
-Project for studies (MMWD)
+Implementation of Tabu search algorithm for water pipe system cost optimization.
